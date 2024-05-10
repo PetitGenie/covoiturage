@@ -1,10 +1,11 @@
 {% extends 'index.html' %}
 {% block section %}
      {% for trajet in trajets %}
-        <div class="trajet">
-            <p>point_depart: {{ trajet.point_depart }}</p>
-            <p>Destination: {{ trajet.destination }}</p>
-            <p>Date: {{ trajet.date }}</p>
+        <div>
+            <p>Point de départ : {{ trajet.point_depart }}</p>
+            <p>Destination : {{ trajet.destination }}</p>
+            <p>Date : {{ trajet.date }}</p>
+            <a href="{% url 'reserver' %}" class="reservation-button">Réserver</a>
         </div>
      {% endfor %}
 {% endblock %}

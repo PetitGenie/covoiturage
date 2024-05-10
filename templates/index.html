@@ -4,8 +4,7 @@
 <head>
     <title>JANA NANJE - Simplifiez vos trajets</title>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" >
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   
 </head>
 <body>
  
@@ -18,7 +17,14 @@
                 <li><a href="/">À propos</a></li>
                 <li><a href='/trajet'>Trajets</a></li>
                 <li><a href="/reservation">Reservation</a></li>
-                <li><a href="/login">Se connecter</a></li>
+                
+                {% if user.is_anonymous %}
+                   <li><a href="/register">Creer un compte</a></li>
+                   <li><a href="/login">Se connecter</a></li>
+                {% else %}   
+                 <li> {{ user.username | upper }}</li>
+                 <li> <a href="/logout">Se deconnecter</a></li>
+                {% endif %} 
             </ul>
         </nav> 
     </header>
@@ -95,6 +101,5 @@
         <p>&copy; 2024 JANA_NANJE. Tous droits réservés.</p>
     </footer>
 
-    <script src="script.js"></script>
 </body>
 </html>

@@ -21,12 +21,12 @@ def connexion(request):
     if request.method == "POST":
         connection_form = LoginForm(request.POST)
         if connection_form.is_valid():
-            print('=====')
+ 
             username = connection_form.cleaned_data['username']
             password = connection_form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                login(request)
+                login(request,user)
                 return redirect("/")
             else:
                 erreur = "We didn't recognize you"
@@ -77,5 +77,6 @@ def createtrajet(request):
 
 
 def trajetdetails(request):
-    trajet= Trajet.objects.all()
-    return render(request, 'trajet.html')
+    trajets= Trajet.objects.all()
+    context = {'trajets': trajets}
+    return render(request, 'trajet.html', context)
