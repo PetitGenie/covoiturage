@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JANA NANJE - Simplifiez vos trajets</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" >
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+ 
+    <header>
+        <nav>
+            <div class="logo" >
+                <img src="{% static 'logo1.jpeg' %}" alt="Covoiturage">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">À propos</a></li>
+                <li><a href='/trajet'>Trajets</a></li>
+                <li><a href="/reservation">Reservation</a></li>
+                <li><a href="/login">Se connecter</a></li>
+            </ul>
+        </nav> 
+    </header>
+    {% block section %}
+    
+    <section class="hero">
+        <div class="hero-text">
+            <h1>JANA NANJE</h1>
+            <p>La solution idéale pour vos trajets quotidiens</p>
+           
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <h2>À propos de JANA NANJE</h2>
+        <p>JANA NANJE est une application conviviale qui vous permet de partager vos trajets avec d'autres utilisateurs, ce qui vous permet de réduire les coûts, de gagner du temps et de contribuer à la réduction des files d'attente des moyens de transport qui deviennent difficiles à cause du carburant qui se fait rare.</p>
+    </section>
+
+   
+    <section id="features" class="features">
+
+  <div class="container">
+    <h2>Fonctionnalités principales</h2> 
+    <h3>Recherche trajet</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Trajet 1</h5>
+              <a href="/reservation" class="btn btn-primary">RESERVER</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Trajet 2</h5>
+              <a href="/reservation" class="btn btn-primary">RESERVER</a>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+
+        <div class="feature">
+           
+            <h3>Réservation simple</h3>
+            <p>Réservez votre place en quelques clics et communiquez avec le conducteur en cas de besoin.</p>
+            <img src="{% static 'image1.jpg' %}" alt="Fonctionnalité 2">
+            
+        </div>
+        <div class="feature">
+            
+            <h3>Paiement sécurisé</h3>
+            <p>Effectuez des paiements sécurisés directement depuis l'application, sans tracas.</p>
+            <img src="{% static 'image2.jpg' %}" alt="Fonctionnalité 3">
+           
+        </div>
+    </section>
+
+    <section id="connect" class="connect">
+        <h2>Utiliser JANA NANJE dès maintenant!</h2>
+        <p>Utiliser notre application dès aujourd'hui et profitez d'une expérience de covoiturage pratique et fiable.</p>
+        <a href="/login" class="cta-button">SE CONNECTER</a>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2>Contactez-nous</h2>
+        <p>Si vous avez des questions, des commentaires ou des suggestions, n'hésitez pas à nous contacter.</p>
+        <a href="mailto:contact@moncovoiturage.com" class="contact-button">Contactez-nous</a>
+    </section>
+    {% endblock  %}
+    <footer>
+        <p>&copy; 2024 JANA_NANJE. Tous droits réservés.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

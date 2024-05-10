@@ -1,0 +1,10 @@
+{% extends 'index.html' %}
+{% block section %}
+     {% for reservation in reservations %}
+        <div class="reservation">
+            <p>User: {{ reservation.user }}</p>
+            <p>Trajet: {{ reservation.trajet }}</p>
+            <p>Avance payée: {{ reservation.avance_paye }}</p>
+        </div>
+     {% endfor %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'index.html' %}
+{% block section %}
+     {% for trajet in trajets %}
+        <div class="trajet">
+            <p>point_depart: {{ trajet.point_depart }}</p>
+            <p>Destination: {{ trajet.destination }}</p>
+            <p>Date: {{ trajet.date }}</p>
+        </div>
+     {% endfor %}
+{% endblock %}
