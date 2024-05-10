@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block section %}
+
+{% for trajet in trajets %}
+    <div>
+        <h3>{{ trajet.point_depart }}</h3>
+        <p>{{ trajet.destination }}</p>
+        <p>{{ trajet.date }}</p>
+        
+        <a href="{% url 'reservation'  %}" class="cta-button">Réserver</a>
+    </div>
+{% endfor %}
+<a href="/trajet" class="cta-button">cree un trajet</a>
+{% endblock section %}
+

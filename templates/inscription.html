@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+
+{% block section %}
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ register_form.as_p }}
+    {{ erreur }}
+    <button type="submit">Soumettre</button>
+</form>
+{% endblock %}

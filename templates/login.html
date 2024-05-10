@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% block section %}
+
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    {% if erreur %}
+        <p>{{ erreur }}</p>
+    {% endif %}
+    <div>
+        {{ connection_form.username.label_tag }}
+        {{ connection_form.username }}
+        {{ connection_form.username.errors }}
+    </div>
+    <div>
+        {{ connection_form.password.label_tag }}
+        {{ connection_form.password }}
+        {{ connection_form.password.errors }}
+    </div>
+    <button type="submit">Se connecter</button>
+</form>
+{% endblock %}
