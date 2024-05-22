@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+
+{% block section %}
+
+<form method="POST" action="{% url 'commentaire' %}">
+    {% csrf_token %}
+    <label for="nom">Nom :</label>
+    <input type="text" name="nom" id="nom" value="{{ request.user.username }}" autocomplete="username" required><br>
+
+    <label for="trajet">Trajet :</label>
+    <input type="text" name="trajet" id="trajet" value="{{ request.user.trajet }}"  required><br>
+
+    <label for="conteu">Contenu :</label>
+    <input type="text" name="contenu" id="contenu" required><br>
+
+    <label for="note">Note :</label>
+    <input type="number" name="note" id="note" required><br>
+
+    <input type="submit" value="Enregistrer">
+</form>
+
+{% endblock %}

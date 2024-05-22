@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import LoginForm, ReserverForm, TrajetForm
+from .forms import LoginForm, ReserverForm, TrajetForm, CommentaireForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from covoiturage.models import Trajet
+from covoiturage.models import Trajet, Reservation
 from .forms import LoginForm
 
 def index(request):
@@ -39,25 +39,25 @@ def deconnexion(request):
     logout(request)
     return redirect("/")  
 
-@login_required(login_url='/login')
+
 def reservation(request):
-    if request.method == "POST":
-        connection_form = ReserverForm(request.POST)
-        if connection_form.is_valid():
-            user = connection_form.cleaned_data['user']
-            trajet = connection_form.cleaned_data['trajet']
-            avance_paye = connection_form.cleaned_data['avance_paye']
-
-            return redirect("/")
-        else:
-            error_message = "Sorry, we didn't recognize you."
-
-            connection_form.add_error(None, error_message)
-    else:
-        connection_form = ReserverForm()
-    
-    context = {'connection_form': connection_form}
+    reservations = Reservation.objects.filter(user=request.user)
+    context = {'reservations': reservations}
     return render(request, 'reserver.html', context)
+
+
+def create_reservation(request, trajet_id):
+    if request.method == 'POST':
+        trajet = Trajet.objects.get(id=trajet_id)
+        reservation = Reservation.objects.create(
+            user=request.user,
+            trajet=trajet,
+           
+        )
+        return redirect('reservation')
+    else:
+        trajet = Trajet.objects.get(id=trajet_id)
+        return render(request, 'reservation_form.html', {'trajet': trajet})
 
 @login_required(login_url='/login')
 def createtrajet(request):
@@ -67,7 +67,7 @@ def createtrajet(request):
             trajet=form.save(commit=False)
             trajet.user= request.user
             trajet.save()
-            return redirect("/")
+            return redirect("/trajet")
             
     else:
         form = TrajetForm()
@@ -75,8 +75,48 @@ def createtrajet(request):
     context = {'form': form}
     return render(request, 'trajet.html', context)
 
-
+@login_required(login_url='/login')
 def trajetdetails(request):
-    trajets= Trajet.objects.all()
-    context = {'trajets': trajets}
+    trajet = Trajet.objects.all()
+    context = {'trajet': trajet}
     return render(request, 'trajet.html', context)
+
+def commentaire(request):
+    if request.method == 'POST':
+        form = CommentaireForm(request.POST)
+        if form.is_valid():
+            commentaire=form.save(commit=False)
+            commentaire.user= request.user
+            commentaire.save()
+            return redirect("/commentaires")
+            
+    else:
+        form = CommentaireForm()
+    
+    context = {'form': form}
+    return render(request, 'commentaire.html', context)
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        password_confirm = request.POST['password_confirm']
+        
+        
+        if password != password_confirm:
+            return render(request, 'register.html', {'error': 'Les mots de passe ne correspondent pas.'})
+        
+        
+        try:
+            user = User.objects.create_user(username=username, email=email, password=password)
+            login(request, user)
+            return redirect('accueil')
+        except:
+            return render(request, 'register.html', {'error': 'Erreur lors de la création du compte.'})
+    
+    return render(request, 'register.html')    

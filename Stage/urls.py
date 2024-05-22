@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import index
 from . import views
-from .views import reservation
+from .views import reservation, createtrajet
 from .views import Trajet
 
 urlpatterns = [
@@ -28,6 +28,9 @@ urlpatterns = [
      path('login/', views.connexion, name='login'),
     path('logout/', views.deconnexion, name='logout'),
     path('reservation/', reservation, name='reservation'),
-    path('trajet/', views.createtrajet, name='trajet'),
-  
+    path('trajet/', views.trajetdetails, name='trajet'),
+    path('trajet/', views.createtrajet, name='createtrajet'),
+    path('commentaires/', views.commentaire, name='commentaire'),
+    path('reservation/', views.create_reservation, name='create_reservation'),
+    path('register/', views.register, name='register'),
 ]

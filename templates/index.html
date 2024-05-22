@@ -24,6 +24,7 @@
                    <li><a href="/login">Se connecter</a></li>
                 {% else %}   
                  <li><a href="/reservation">Reservation</a></li>
+                 <li><a href="/commentaires">Laissez un commentaire</a></li>
                  <li> {{ user.username | upper }}</li>
                  <li> <a href="/logout">Se deconnecter</a></li>
                 {% endif %} 
@@ -42,7 +43,9 @@
 
     <section id="about" class="about">
         <h2>À propos de JANA NANJE</h2>
-        <p>JANA NANJE est une application conviviale qui vous permet de partager vos trajets avec d'autres utilisateurs, ce qui vous permet de réduire les coûts, de gagner du temps et de contribuer à la réduction des files d'attente des moyens de transport qui deviennent difficiles à cause du carburant qui se fait rare.</p>
+        <p>JANA NANJE est une application conviviale qui vous permet de partager vos trajets avec d'autres utilisateurs, 
+          ce qui vous permet de réduire les coûts, de gagner du temps et de contribuer à la réduction des files d'attente
+           des moyens de transport qui deviennent difficiles.</p>
     </section>
 
    
@@ -50,29 +53,9 @@
 
   <div class="container">
     <h2>Fonctionnalités principales</h2> 
-    <h3>Recherche trajet</h3>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">Trajet 1</h5>
-              <a href="/reservation" class="btn btn-primary">RESERVER</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">Trajet 2</h5>
-              <a href="/reservation" class="btn btn-primary">RESERVER</a>
-            </div>
-          </div>
-        </div>
-      </div>
-</div>
-
+          
         <div class="feature">
-           
+          <h3>Recherche trajet</h3>
             <h3>Réservation simple</h3>
             <p>Réservez votre place en quelques clics et communiquez avec le conducteur en cas de besoin.</p>
             <img src="{% static 'image1.jpg' %}" alt="Fonctionnalité 2">

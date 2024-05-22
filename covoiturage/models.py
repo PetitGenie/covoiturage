@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Trajet(models.Model):
     point_depart = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
-    heure_depart = models.DateTimeField()
+    heure_depart = models.DateTimeField(editable=True)
     places_disponibles = models.IntegerField()
     
     modele = models.CharField(max_length=35, null=True)

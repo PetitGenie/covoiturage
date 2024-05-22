@@ -1,6 +1,7 @@
 from django import forms
 from covoiturage.models import Trajet, User
 
+
 class LoginForm(forms.Form):
     username= forms.CharField()
     password= forms.CharField()
@@ -18,6 +19,12 @@ class TrajetForm(forms.ModelForm):
     class Meta:
         model = Trajet
         fields = '__all__' 
+
+class CommentaireForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all())
+    trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
+    contenu= forms.CharField()
+    note = forms.IntegerField()
 
 
 
