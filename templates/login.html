@@ -1,11 +1,12 @@
 {% extends 'index.html' %}
 {% block section %}
-
-<form action="{% url 'login' %}" method="post" class="login-form">
+<div class="add">
+<form action="{% url 'login' %}" method="post" class="add">
     {% csrf_token %}
     {% if erreur %}
         <p>{{ erreur }}</p>
     {% endif %}
+    <h3>Connectez-vous</h3>
     <div>
         {{ connection_form.username.label_tag }}
         {{ connection_form.username }}
@@ -18,4 +19,5 @@
     </div>
     <button class="submit" type="submit">Se connecter</button>
 </form>
+</div>
 {% endblock %}

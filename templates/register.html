@@ -1,11 +1,11 @@
 {% extends 'index.html' %}
 
 {% block section %}
-    <h1>Inscription</h1>
-    
-    <form method="post">
+   
+    <div class="add">
+    <form method="post" class="add">
         {% csrf_token %}
-        
+        <h1>Inscription</h1>
         <div>
             <label for="username">Nom d'utilisateur :</label>
             <input type="text" id="username" name="username" required>
@@ -28,4 +28,5 @@
         
         <button type="submit">S'inscrire</button>
     </form>
+    </div>
 {% endblock %}

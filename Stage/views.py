@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from covoiturage.models import Trajet, Reservation
-from .forms import LoginForm
+
 
 def index(request):
    
@@ -40,9 +40,9 @@ def deconnexion(request):
     return redirect("/")  
 
 
-def reservation(request):
-    reservations = Reservation.objects.filter(user=request.user)
-    context = {'reservations': reservations}
+def reservationDetails(request):
+    reservation = Reservation.objects.filter(user=request.user)
+    context = {'reservation': reservation}
     return render(request, 'reserver.html', context)
 
 
@@ -59,7 +59,7 @@ def create_reservation(request, trajet_id):
         trajet = Trajet.objects.get(id=trajet_id)
         return render(request, 'reservation_form.html', {'trajet': trajet})
 
-@login_required(login_url='/login')
+
 def createtrajet(request):
     if request.method == 'POST':
         form = TrajetForm(request.POST)
@@ -73,7 +73,7 @@ def createtrajet(request):
         form = TrajetForm()
     
     context = {'form': form}
-    return render(request, 'trajet.html', context)
+    return render(request, 'ajouterTrajet.html', context)
 
 @login_required(login_url='/login')
 def trajetdetails(request):
@@ -95,10 +95,6 @@ def commentaire(request):
     
     context = {'form': form}
     return render(request, 'commentaire.html', context)
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth import login
 
 def register(request):
     if request.method == 'POST':

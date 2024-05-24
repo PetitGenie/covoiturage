@@ -1,9 +1,9 @@
 {% extends 'index.html' %}
 
 {% block section %}
-<div class="reservation-section">
+ <div >
     {% for trajet in trajets %}
-    <div class="reservation-card">
+    <div >
         <p>Point de départ : {{ trajet.point_depart }}</p>
         <p>Destination : {{ trajet.destination }}</p>
         <p>Date : {{ trajet.heure_depart }}</p>
@@ -12,36 +12,11 @@
         <p>Places disponibles : {{ trajet.places_disponibles }}</p>
         <a href="{% url 'create_reservation'  %}" class="reservation-button">Réserver</a>
     </div>
-    {% endfor %}
-</div>
-{% endblock %}
+  
+ </div>
 
-    <div>
-        <h2>Ajouter un trajet si vous avez une voiture</h2>
-        <form method="POST" action="{% url 'createtrajet' %}">
-            {% csrf_token %}
-            <label for="nom">Nom :</label>
-            <input type="text" name="nom" id="nom" value="{{ request.user.username }}" autocomplete="username" required><br>
+{% endfor %}
 
-            <label for="point_depart">Point de départ :</label>
-            <input type="text" name="point_depart" id="point_depart" required><br>
-
-            <label for="destination">Destination :</label>
-            <input type="text" name="destination" id="destination" required><br>
-
-            <label for="heure_depart">Heure de départ :</label>
-            <input type="text" name="heure_depart" id="heure_depart" required><br>
-
-            <label for="modele">Modèle :</label>
-            <input type="text" name="modele" id="modele" required><br>
-
-            <label for="plaque">Plaque :</label>
-            <input type="text" name="plaque" id="plaque" required><br>
-
-            <label for="places_dispo">Places disponibles :</label>
-            <input type="number" name="places_dispo" id="places_dispo" required><br>
-
-            <input type="submit" value="Enregistrer">
-        </form>
-    </div>
+<h3>Si vous possedez une voiture et que vous avec un voyage prochain a faire 
+    et que vous souhaitez partagez votre trajet <a href="/ajouterTrajet">cliquez ici</a> pour le faire savoir aux autres</h3>
 {% endblock %}
