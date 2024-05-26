@@ -46,19 +46,30 @@ def reservationDetails(request):
     return render(request, 'reserver.html', context)
 
 
+
 def create_reservation(request, trajet_id):
     if request.method == 'POST':
         trajet = Trajet.objects.get(id=trajet_id)
-        reservation = Reservation.objects.create(
+        print(f"Trajet récupéré : {trajet}")
+        reservation = Reservation(
             user=request.user,
             trajet=trajet,
            
         )
-        return redirect('reservation')
+        try:
+            reservation.full_clean()  
+            print(f"Réservation créée : {reservation}")
+            reservation.save()
+            print(f"Réservation enregistrée")
+            return redirect('reservation_list')
+        except Exception as e:
+          
+            print(f"Erreur lors de la création de la réservation: {e}")
+            return render(request, 'trajet.html', {'trajet': trajet, 'error_message': "Une erreur est survenue lors de la création de la réservation."})
     else:
         trajet = Trajet.objects.get(id=trajet_id)
-        return render(request, 'reservation_form.html', {'trajet': trajet})
-
+        print(f"Trajet récupéré : {trajet}")
+        return render(request, 'trajet.html', {'trajet': trajet})
 
 def createtrajet(request):
     if request.method == 'POST':
@@ -77,8 +88,8 @@ def createtrajet(request):
 
 @login_required(login_url='/login')
 def trajetdetails(request):
-    trajet = Trajet.objects.all()
-    context = {'trajet': trajet}
+    trajets = Trajet.objects.all()
+    context = {'trajet': trajets}
     return render(request, 'trajet.html', context)
 
 def commentaire(request):

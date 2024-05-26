@@ -1,22 +1,27 @@
 {% extends 'index.html' %}
 
 {% block section %}
-
-<form method="POST" action="{% url 'commentaire' %}">
+<div class="add">
+<form method="POST" action="{% url 'commentaire' %}" >
     {% csrf_token %}
     <label for="nom">Nom :</label>
     <input type="text" name="nom" id="nom" value="{{ request.user.username }}" autocomplete="username" required><br>
 
     <label for="trajet">Trajet :</label>
-    <input type="text" name="trajet" id="trajet" value="{{ request.user.trajet }}"  required><br>
+    <select name="trajet" id="trajet" required>
+        <option value="">Choisissez un trajet</option>
+        {% for trajet in request.user.trajets.all %}
+        <option value="{{ trajet.id }}" {% if trajet == reservation.trajet %}selected{% endif %}>{{ trajet }}</option>
+        {% endfor %}
+    </select>
 
-    <label for="conteu">Contenu :</label>
+    <label for="conteu" >Contenu :</label>
     <input type="text" name="contenu" id="contenu" required><br>
 
-    <label for="note">Note :</label>
-    <input type="number" name="note" id="note" required><br>
+    <label for="note">Note (sur 10) :</label>
+    <input type="number" name="note" id="note" min="0" max="10" step="1" required><br>
 
-    <input type="submit" value="Enregistrer">
+    <input type="submit" class="submit" value="Enregistrer">
 </form>
-
+</div>
 {% endblock %}

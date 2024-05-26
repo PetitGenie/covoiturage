@@ -5,7 +5,7 @@
     <div class="add">
     <form method="post" class="add">
         {% csrf_token %}
-        <h1>Inscription</h1>
+        <h1>Formulaire d'Inscription</h1>
         <div>
             <label for="username">Nom d'utilisateur :</label>
             <input type="text" id="username" name="username" required>
@@ -26,7 +26,7 @@
             <input type="password" id="password_confirm" name="password_confirm" required>
         </div>
         
-        <button type="submit">S'inscrire</button>
+        <button type="submit" class="submit">S'inscrire</button>
     </form>
     </div>
 {% endblock %}

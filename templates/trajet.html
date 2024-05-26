@@ -1,22 +1,53 @@
 {% extends 'index.html' %}
 
 {% block section %}
- <div >
-    {% for trajet in trajets %}
-    <div >
-        <p>Point de départ : {{ trajet.point_depart }}</p>
-        <p>Destination : {{ trajet.destination }}</p>
-        <p>Date : {{ trajet.heure_depart }}</p>
-        <p>Modele : {{ trajet.modele }}</p>
-        <p>Plaque : {{ trajet.plaque }}</p>
-        <p>Places disponibles : {{ trajet.places_disponibles }}</p>
-        <a href="{% url 'create_reservation'  %}" class="reservation-button">Réserver</a>
+<div class="container trajet-page">
+    <div class="row justify-content-center">
+        {% for trajet in trajet %}
+        <div class="col-md-6 mb-4">
+            <div class="card trajet-card shadow-lg">
+                <div class="card-body">
+                    <form class="form-vertical">
+                        <div class="form-group">
+                            <label for="point-depart-{{ forloop.counter }}">Point de départ</label>
+                            <input type="text" class="form-control" id="point-depart-{{ forloop.counter }}" value="{{ trajet.point_depart }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination-{{ forloop.counter }}">Destination</label>
+                            <input type="text" class="form-control" id="destination-{{ forloop.counter }}" value="{{ trajet.destination }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="heure-depart-{{ forloop.counter }}">Date</label>
+                            <input type="text" class="form-control" id="heure-depart-{{ forloop.counter }}" value="{{ trajet.heure_depart }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modele-{{ forloop.counter }}">Modèle</label>
+                            <input type="text" class="form-control" id="modele-{{ forloop.counter }}" value="{{ trajet.modele }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="plaque-{{ forloop.counter }}">Plaque</label>
+                            <input type="text" class="form-control" id="plaque-{{ forloop.counter }}" value="{{ trajet.plaque }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="places-disponibles-{{ forloop.counter }}">Places disponibles</label>
+                            <input type="text" class="form-control" id="places-disponibles-{{ forloop.counter }}" value="{{ trajet.places_disponibles }}" readonly>
+                        </div>
+                        <div class="text-center">
+                            <a href="{% url 'create_reservation' %}" class="btn btn-primary">Réserver</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-  
- </div>
+</div>
 
-{% endfor %}
-
-<h3>Si vous possedez une voiture et que vous avec un voyage prochain a faire 
-    et que vous souhaitez partagez votre trajet <a href="/ajouterTrajet">cliquez ici</a> pour le faire savoir aux autres</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h3>Vous possédez une voiture et vous avez un voyage prochain à faire, si vous souhaitez partager votre trajet, <a href="/ajouterTrajet">cliquez ici</a> pour le faire savoir aux autres</h3>
+        </div>
+    </div>
+</div>
 {% endblock %}

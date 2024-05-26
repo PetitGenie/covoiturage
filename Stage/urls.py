@@ -30,6 +30,6 @@ urlpatterns = [
     path('trajet/', views.trajetdetails, name='trajet'),
     path('ajouterTrajet/', views.createtrajet, name='createtrajet'),
     path('commentaires/', views.commentaire, name='commentaire'),
-    
+    path('reservation/', views.create_reservation, name='create_reservation'),
     path('register/', views.register, name='register'),
 ]
