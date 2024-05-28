@@ -1,11 +1,32 @@
-{% extends 'index.html' %}
+{% load static %}
 
-
-{% block section %}
-<form method="post" class="form">
-    {% csrf_token %}
-    {{ register_form.as_p }}
-    {{ erreur }}
-    <button type="submit">Soumettre</button>
-</form>
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'inscrip.css' %}">
 {% endblock %}
+
+
+<div class="container">
+    <div class="form_area">
+        <p class="title">S'inscrire</p>
+        <form method="post" class="form">
+            {% csrf_token %}
+            <div class="form_group">
+                <label class="sub_title" for="id_name">Nom</label>
+                {{ register_form.name }}
+            </div>
+            <div class="form_group">
+                <label class="sub_title" for="id_email">Email</label>
+                {{ register_form.email }}
+            </div>
+            <div class="form_group">
+                <label class="sub_title" for="id_password">Mot de passe</label>
+                {{ register_form.password }}
+            </div>
+            <div>
+                <button type="submit" class="btn">S'inscrire</button>
+                <p>Vous avez déjà un compte ? <a class="link" href="/login">Connectez-vous ici</a></p>
+            </div>
+        </form>
+        {{ erreur }}
+    </div>
+</div>

@@ -27,8 +27,9 @@ urlpatterns = [
     path('', index),
     path('login/', views.logins, name='login'),
     path('logout/', views.deconnexion, name='logout'),
-    path('reservation/', reservation, name='reservation'),
+    path('reservation/', views.reservation, name='reservation'),
     path('trajet/', views.trajets, name='trajet'),
+    path('trajets/', views.create_trajet, name='trajet'),
     path('register/', views.register, name='register'),
   
 ]

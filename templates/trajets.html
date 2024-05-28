@@ -1,9 +1,9 @@
 {% extends 'index.html' %}
 {% block section %}
-    <h1>Réserver un trajet</h1>
+    <h1>Créer un nouveau trajet</h1>
     <form method="post">
         {% csrf_token %}
-        {{ reservation_form.as_p }}
-        <button type="submit">Réserver</button>
+        {{ form.as_p }}
+        <button type="submit">Enregistrer</button>
     </form>
 {% endblock section %}
