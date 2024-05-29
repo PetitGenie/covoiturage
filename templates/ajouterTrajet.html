@@ -1,33 +1,13 @@
-{% extends "index.html" %}
-
+{% extends 'index.html' %}
+{% load static %}
 {% block section %}
-<div class="add" >
-    
-    <form method="POST" action="{% url 'createtrajet' %}" >
+
+  <link rel="stylesheet" href="{% static 'trajet.css' %}">
+
+    <h1>Créer un nouveau trajet</h1>
+    <form method="POST">
         {% csrf_token %}
-        <h2>Formulaire d'Ajout </h2>
-        <label for="nom">Nom :</label>
-        <input type="text" name="nom" id="nom" value="{{ request.user.username }}" autocomplete="username" required><br>
-
-        <label for="point_depart">Point de départ :</label>
-        <input type="text" name="point_depart" id="point_depart" required><br>
-
-        <label for="destination">Destination :</label>
-        <input type="text" name="destination" id="destination" required><br>
-
-        <label for="heure_depart">Heure de départ :</label>
-        <input type="text" name="heure_depart" id="heure_depart" required><br>
-
-        <label for="modele">Modèle :</label>
-        <input type="text" name="modele" id="modele" required><br>
-
-        <label for="plaque">Plaque :</label>
-        <input type="text" name="plaque" id="plaque" required><br>
-
-        <label for="places_dispo">Places disponibles :</label>
-        <input type="number" name="places_dispo" id="places_dispo" required><br>
-
-        <input type="submit" class="submit" value="Enregistrer">
+        {{ form.as_p }}
+        <button type="submit">Enregistrer</button>
     </form>
-</div>
-{% endblock %}
+{% endblock section %}

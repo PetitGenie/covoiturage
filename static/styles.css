@@ -1,31 +1,28 @@
-/* Reset CSS */
-* {
+/* Styles généraux */
+body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-h1, p {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
 }
 
-/* Header */
+/* En-tête */
 header {
-    background-color: #8d725c;
-    padding: 20px 0;
+    background-color: #302525;
+    color: #fff;
+    padding: 20px;
 }
 
-.logo img {
-    height: 40px;
-    vertical-align: middle;
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-links li {
@@ -33,100 +30,104 @@ header {
 }
 
 .nav-links a {
+    color: #fff;
     text-decoration: none;
-    color: #e0dfd8;
-    font-weight: bold;
 }
 
-/* Hero Section */
+.logo img {
+    max-width: 100px;
+}
+
+/* Section hero */
 .hero {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background-image: linear-gradient(to right, #5f545c, #6c757d);
+    color: #fff;
     padding: 100px 0;
+    text-align: center;
 }
 
 .hero-text {
-    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.hero-text h1 {
+.hero h1 {
     font-size: 48px;
     margin-bottom: 20px;
 }
 
-.hero-text p {
-    font-size: 20px;
-    margin-bottom: 30px;
+.hero p {
+    font-size: 24px;
+    margin-bottom: 40px;
 }
 
-.cta-button {
-    display: inline-block;
-    background-color: #ff6600;
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.hero-image img {
-    max-width: 200px;
-    height: auto;
-}
-
-/* About Section */
+/* Section à propos */
 .about {
+    background-color: #ebf1f1;
     padding: 80px 0;
     text-align: center;
 }
 
 .about h2 {
+    color: #333333;
     font-size: 36px;
     margin-bottom: 20px;
 }
 
 .about p {
+    color: #666;
     font-size: 18px;
-    margin-bottom: 30px;
+    line-height: 1.5;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-/* Features Section */
+/* Section fonctionnalités */
 .features {
+    background-color: #dce8eb;
     padding: 80px 0;
 }
 
 .features h2 {
+    color: #333;
     font-size: 36px;
-    margin-bottom: 40px;
     text-align: center;
+    margin-bottom: 40px;
 }
 
 .feature {
-    text-align: center;
-    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 60px;
 }
 
-.feature img {
-    max-width: 200px;
-    height: auto;
-    margin-bottom: 20px;
+.container{
+    max-width: 300px;
+    margin-right: 40px;
 }
 
 .feature h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    text-align: center;
+    color: #363f39;
+    font-size: 40px;
+    margin-bottom: 20px;
 }
 
 .feature p {
+    color: #666;
     font-size: 16px;
+    line-height: 1;
+    margin-bottom: 20px;
 }
 
+.feature img {
+    max-width: 300px;
+    margin-right: 40px;
+}
 
+/* Section connexion */
 .connect {
-    background-color: #7d756f;
-    color: #291e1e;
+    background-color: #575a4c;
+    color: #fff;
     padding: 80px 0;
     text-align: center;
 }
@@ -138,122 +139,66 @@ header {
 
 .connect p {
     font-size: 18px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
-.contact-button {
-    display: inline-block;
+.cta-button {
     background-color: #fff;
-    color: #ff6600;
+    color: #007bff;
     padding: 12px 24px;
     border-radius: 4px;
     text-decoration: none;
+    font-size: 16px;
     font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-/* Contact Section */
+.cta-button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Section contact */
 .contact {
     padding: 80px 0;
     text-align: center;
-    background-color: #f5f5f5;
 }
 
 .contact h2 {
+    color: #333;
     font-size: 36px;
     margin-bottom: 20px;
 }
 
 .contact p {
+    color: #666;
     font-size: 18px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
-/* Footer */
+.contact-button {
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.contact-button:hover {
+    background-color: #218838;
+}
+
+/* Pied de page */
 footer {
     background-color: #333;
     color: #fff;
-    text-align: center;
     padding: 20px 0;
+    text-align: center;
 }
 
 footer p {
     font-size: 14px;
-    color: #fff;
-}
-
-/* messages d'erreur */
-.error {
-    color: #ff0000;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 10px;
-}
-
-/* ajouterTrajet */
-h2{
-    font-size: 36px;
-    margin-bottom: 40px;
-    text-align: center;
-}
-.add {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    
-    
-  }
-  
-  .add form {
-    box-shadow: 0 0 90px rgba(17, 17, 17, 0.3);
-    padding: 20px;
-    border-radius: 20px;
-    background-color: #f39f5a;
-  }
-.submit{
-    color:hsl(120, 17%, 98%);
-    background-color: #dd627b;
-    height: 30px;
-   
-}
-
-/* trajets */
-
-
-.trajet-page {
-    margin-top: 40px;
-}
-
-.trajet-card {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.trajet-card .card-body {
-    padding: 20px;
-}
-
-.trajet-card .form-vertical .form-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.trajet-card .form-vertical .form-group label {
-    margin-right: 15px;
-    width: 150px;
-    text-align: right;
-}
-
-.trajet-card .form-vertical .form-control {
-    background-color: #f5f5f5;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    flex-grow: 1;
-}
-
-.trajet-card .btn {
-    margin-top: 20px;
 }

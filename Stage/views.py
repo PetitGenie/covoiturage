@@ -1,27 +1,48 @@
-from django.shortcuts import render, redirect
-from .forms import LoginForm, ReserverForm, TrajetForm, CommentaireForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import LoginForm, ReserverForm, TrajetForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from covoiturage.models import Trajet, Reservation
-
+from datetime import datetime
 
 def index(request):
    
     return render(request, "index.html", locals()) 
 
+from django.shortcuts import render, redirect
+from .forms import RegisterForm
 
+def register(request):
+    if request.method == 'POST':
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            name = register_form.cleaned_data['name']
+            email = register_form.cleaned_data['email']
+            password = register_form.cleaned_data['password']
+            
+            try:
+                user = User.objects.create_user(username=name, email=email, password=password)
+                user.save()
+                return redirect('login')
+            except Exception as e:
+                register_form.add_error(None, str(e))
+    else:
+        register_form = RegisterForm()
 
+    return render(request, 'register.html', {'register_form': register_form})
 
-def connexion(request):
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm
+
+def logins(request):
     connection_form = LoginForm()
     erreur = ""
 
     if request.method == "POST":
         connection_form = LoginForm(request.POST)
         if connection_form.is_valid():
- 
             username = connection_form.cleaned_data['username']
             password = connection_form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
@@ -37,48 +58,43 @@ def connexion(request):
 
 def deconnexion(request):
     logout(request)
-    return redirect("/")  
+    return redirect("/") 
+         
+@login_required(login_url='/login/')
+def reservation(request):
+    if request.user.is_authenticated:
+        reservations = Reservation.objects.filter(user=request.user)
+    else:
+        reservations = []
 
-
-def reservationDetails(request):
-    reservation = Reservation.objects.filter(user=request.user)
-    context = {'reservation': reservation}
+    context = {'reservations': reservations}
     return render(request, 'reserver.html', context)
 
 
+def createReservation(request, trajet_id):
+    trajet = get_object_or_404(Trajet, id=trajet_id)
 
-def create_reservation(request, trajet_id):
     if request.method == 'POST':
-        trajet = Trajet.objects.get(id=trajet_id)
-        print(f"Trajet récupéré : {trajet}")
-        reservation = Reservation(
-            user=request.user,
-            trajet=trajet,
-           
-        )
-        try:
-            reservation.full_clean()  
-            print(f"Réservation créée : {reservation}")
-            reservation.save()
-            print(f"Réservation enregistrée")
-            return redirect('reservation_list')
-        except Exception as e:
-          
-            print(f"Erreur lors de la création de la réservation: {e}")
-            return render(request, 'trajet.html', {'trajet': trajet, 'error_message': "Une erreur est survenue lors de la création de la réservation."})
-    else:
-        trajet = Trajet.objects.get(id=trajet_id)
-        print(f"Trajet récupéré : {trajet}")
-        return render(request, 'trajet.html', {'trajet': trajet})
+        nom = request.POST['nom']
+        email = request.POST['email']
 
-def createtrajet(request):
+        reservation = Reservation.objects.create(
+            trajet=trajet,
+            nom=nom,
+            email=email
+        )
+        return redirect('/reservation', reservation_id=reservation.id)
+
+    return render(request, 'reserver.html', {'trajet': trajet})
+
+def create_trajet(request):
     if request.method == 'POST':
         form = TrajetForm(request.POST)
         if form.is_valid():
             trajet=form.save(commit=False)
             trajet.user= request.user
             trajet.save()
-            return redirect("/trajet")
+            return redirect("/trajets")
             
     else:
         form = TrajetForm()
@@ -86,44 +102,13 @@ def createtrajet(request):
     context = {'form': form}
     return render(request, 'ajouterTrajet.html', context)
 
-@login_required(login_url='/login')
-def trajetdetails(request):
-    trajets = Trajet.objects.all()
-    context = {'trajet': trajets}
+@login_required(login_url='/login/')
+def trajets(request):
+    now = datetime.now()
+    trajets = Trajet.objects.filter(date__gte=now)
+
+    context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
-def commentaire(request):
-    if request.method == 'POST':
-        form = CommentaireForm(request.POST)
-        if form.is_valid():
-            commentaire=form.save(commit=False)
-            commentaire.user= request.user
-            commentaire.save()
-            return redirect("/commentaires")
-            
-    else:
-        form = CommentaireForm()
-    
-    context = {'form': form}
-    return render(request, 'commentaire.html', context)
-
-def register(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        password_confirm = request.POST['password_confirm']
-        
-        
-        if password != password_confirm:
-            return render(request, 'register.html', {'error': 'Les mots de passe ne correspondent pas.'})
-        
-        
-        try:
-            user = User.objects.create_user(username=username, email=email, password=password)
-            login(request, user)
-            return redirect('accueil')
-        except:
-            return render(request, 'register.html', {'error': 'Erreur lors de la création du compte.'})
-    
-    return render(request, 'register.html')    
+def comments(request):
+    return render(request, 'commentaire.html')

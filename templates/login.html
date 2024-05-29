@@ -1,12 +1,13 @@
 {% extends 'index.html' %}
+{% load static %}
 {% block section %}
-<div class="add">
-<form action="{% url 'login' %}" method="post" class="add">
+<link rel="stylesheet" href="{% static 'login.css' %}">
+<div class="form-container">
+    <form action="{% url 'login' %}" method="post">
     {% csrf_token %}
     {% if erreur %}
         <p>{{ erreur }}</p>
     {% endif %}
-    <h3>Connectez-vous</h3>
     <div>
         {{ connection_form.username.label_tag }}
         {{ connection_form.username }}
@@ -17,7 +18,8 @@
         {{ connection_form.password }}
         {{ connection_form.password.errors }}
     </div>
-    <button class="submit" type="submit">Se connecter</button>
+    <button type="submit">Se connecter</button>
 </form>
 </div>
+
 {% endblock %}

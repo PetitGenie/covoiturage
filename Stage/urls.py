@@ -16,20 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import index, reservationDetails, createtrajet, trajetdetails
+from .views import index
 from . import views
-
+from .views import reservation
+from .views import Trajet, comments
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('covoiturage/', include('covoiturage.urls')),
     path('', index),
-     path('login/', views.connexion, name='login'),
+    path('login/', views.logins, name='login'),
     path('logout/', views.deconnexion, name='logout'),
-    path('reservation/', views.reservationDetails, name='reservationDetails'),
-    path('trajet/', views.trajetdetails, name='trajet'),
-    path('ajouterTrajet/', views.createtrajet, name='createtrajet'),
-    path('commentaires/', views.commentaire, name='commentaire'),
-    path('reservation/', views.create_reservation, name='create_reservation'),
+    path('reservation/', views.reservation, name='reservation'),
+    path('trajet/', views.trajets, name='trajet'),
+    path('trajets/', views.create_trajet, name='trajet'),
     path('register/', views.register, name='register'),
+    path('commentaires/', views.comments, name='comments'),
+    
+  
 ]

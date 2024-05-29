@@ -7,9 +7,9 @@ from django.contrib.auth.models import User
 class Trajet(models.Model):
     point_depart = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
-    heure_depart = models.DateTimeField(editable=True)
+    heure_depart = models.TimeField(editable=True)
     places_disponibles = models.IntegerField()
-    
+    date = models.DateField(editable=True, null=True)
     modele = models.CharField(max_length=35, null=True)
     plaque = models.CharField(max_length=10, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, editable=False)

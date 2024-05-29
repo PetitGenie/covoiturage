@@ -24,7 +24,7 @@
                    <li><a href="/login">Se connecter</a></li>
                 {% else %}   
                  <li><a href="/reservation">Reservation</a></li>
-                 <li><a href="/commentaires">Laissez un commentaire</a></li>
+                
                  <li> {{ user.username | upper }}</li>
                  <li> <a href="/logout">Se deconnecter</a></li>
                 {% endif %} 
@@ -51,23 +51,28 @@
    
     <section id="features" class="features">
 
-  <div class="container">
+  
     <h2>Fonctionnalités principales</h2> 
-          
         <div class="feature">
-          <h3>Recherche trajet</h3>
+            <section class="container">
+            <h3>Recherche trajet</h3>
+            <p>Rechercher des trajets qui peuvent vous convenir.</p>
+            <img src="{% static 'image1.jpg' %}" alt="Fonctionnalité 1">
+        </section>
+        
+        <section class="container">
             <h3>Réservation simple</h3>
             <p>Réservez votre place en quelques clics et communiquez avec le conducteur en cas de besoin.</p>
             <img src="{% static 'image1.jpg' %}" alt="Fonctionnalité 2">
             
-        </div>
-        <div class="feature">
-            
+
+        </section>
+        <section class="container">    
             <h3>Paiement sécurisé</h3>
             <p>Effectuez des paiements sécurisés directement depuis l'application, sans tracas.</p>
             <img src="{% static 'image2.jpg' %}" alt="Fonctionnalité 3">
-           
-        </div>
+        </section>   
+        
     </section>
 
     <section id="connect" class="connect">

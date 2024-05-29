@@ -1,22 +1,12 @@
 {% extends 'index.html' %}
-
 {% block section %}
-<div class="container">
-    <div class="row justify-content-center">
-        {% for reservation in reservation %}
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-lg">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Réservation</h5>
-                    <div class="reservation">
-                        <p>User: {{ reservation.user }}</p>
-                        <p>Trajet: {{ reservation.trajet }}</p>
-                        <p>Avance payée: {{ reservation.avance_paye }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endblock %}
+  {% if reservations %}
+    <h2>Mes Réservations</h2>
+    {% for reservation in reservations %}
+      <h4>Trajet:</h4><p>{{ reservation.trajet }}</p>
+      <h4>Date:</h4><p>{{ reservation.date }}</p>
+    {% endfor %}
+  {% else %}
+    <p>Vous n'avez pas de réservation pour le moment.</p>
+  {% endif %} 
+{% endblock section %}
