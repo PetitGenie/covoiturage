@@ -2,17 +2,18 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-
+class Vehicule(models.Model):
+    modele = models.CharField(max_length=35, null=True)
+    plaque = models.CharField(max_length=10, null=True)
 
 class Trajet(models.Model):
     point_depart = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
-    heure_depart = models.TimeField(editable=True)
+    heure_depart = models.TimeField(editable=True, null=True)
     places_disponibles = models.IntegerField()
     date = models.DateField(editable=True, null=True)
-    modele = models.CharField(max_length=35, null=True)
-    plaque = models.CharField(max_length=10, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, editable=False)
+    done = models.BooleanField(default=False, editable=False)
    
     def __str__(self):
         return f"{self.point_depart} - {self.destination}"
@@ -29,6 +30,7 @@ class Reservation(models.Model):
     trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE)
     date = models.DateTimeField(editable=True, null=True)
     avance_payee=models.PositiveIntegerField(editable=True, null=True)
+    places = models.PositiveIntegerField(null=True)
     statut= models.CharField(max_length=10, choices=STATUT_CHOICES, default='En attente')
 
     def annuler_resvation(self):

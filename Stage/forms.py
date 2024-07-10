@@ -1,5 +1,5 @@
 from django import forms
-from covoiturage.models import Trajet, User
+from covoiturage.models import Trajet, User, Commentaire
 
 class LoginForm(forms.Form):
     username= forms.CharField()
@@ -9,8 +9,8 @@ class LoginForm(forms.Form):
 class ReserverForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all())
     trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
-    avance_paye = forms.DecimalField()
-    
+    places = forms.DecimalField()
+
 
 class TrajetForm(forms.ModelForm):
     heure_depart = forms.TimeField(
@@ -44,13 +44,10 @@ class RegisterForm(forms.Form):
     password = forms.CharField(max_length=100, widget=forms.PasswordInput(attrs={'class': 'form_style'}))
     
 class CommentaireForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=User.objects.all())
+    user = forms.ModelChoiceField(queryset=User.objects.filter())
     trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
     contenu= forms.CharField()
     note = forms.IntegerField()
-
-
-
 
 
 

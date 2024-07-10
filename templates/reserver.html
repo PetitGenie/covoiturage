@@ -1,12 +1,53 @@
 {% extends 'index.html' %}
+{% load static %}
 {% block section %}
+<link rel="stylesheet" type="text/css" href="{% static 'reserver.css' %}" >
+<div class="reservation-form-container">
+  <form class="reservation-form" method="POST">
+    {% csrf_token %}
+    <h1>Creer une reservation</h1>
+    <div class="form-group">
+      <label for="username">Utilisateur :</label>
+      <input id="username" name="username" type="text" value="{{ user.username }}" readonly>
+    </div>
+    <div class="form-group">
+      <label for="trajet">Trajet :</label>
+      {% for trajet in trajets %}
+      <input id="{{ trajet.id }}" name="trajet" type="radio" value="{{ trajet.id }}" {% if selected_trajet and selected_trajet.id == trajet.id %} checked{% endif %}>
+      <label for="{{ trajet.id }}">{{ trajet.point_depart }} - {{ trajet.destination }} ({{ trajet.places_disponibles }} places disponibles)</label>
+      {% endfor %}
+    </div>
+    <div class="form-group">
+      <label for="places">Places :</label>
+      <input id="places" name="places" type="number" min="1">
+    </div>
+    <div class="form-group">
+      <label for="date">Date :</label>
+      <input id="date" name="date" type="date" value="{{ today }}" required>
+    </div>
+    {% if messages and 'error' in messages.tags %}
+    <div class="alert alert-danger">{{ messages|last }}</div>
+    {% endif %}
+    <button type="submit">Réserver</button>
+  </form>
+</div>
+
+
+<div class="reserver-list"> 
   {% if reservations %}
-    <h2>Mes Réservations</h2>
-    {% for reservation in reservations %}
-      <h4>Trajet:</h4><p>{{ reservation.trajet }}</p>
-      <h4>Date:</h4><p>{{ reservation.date }}</p>
-    {% endfor %}
+  <h2>Mes Réservations</h2>
+  {% for reservation in reservations %}
+  <article class="reservation-item"> 
+      <div class="reservation-details"> 
+          <h4>Trajet :</h4><p>{{ reservation.trajet.point_depart }} - {{ reservation.trajet.destination }}</p>
+          <h4>Date :</h4><p>{{ reservation.date|date:"d/m/Y" }}</p>
+          <h4>Places :</h4><p>{{ reservation.places }}</p>
+      </div>
+  </article>
+  {% endfor %}
+  </div>    
   {% else %}
-    <p>Vous n'avez pas de réservation pour le moment.</p>
+  <p>Vous n'avez pas de réservation pour le moment.</p>
   {% endif %} 
+  
 {% endblock section %}

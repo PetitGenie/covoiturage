@@ -4,8 +4,8 @@
 
   <link rel="stylesheet" href="{% static 'ajouterT.css' %}">
 
+    <h1>Modifier mon trajet</h1>
     <form method="POST">
-        <h1>Formulaire</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Enregistrer</button>

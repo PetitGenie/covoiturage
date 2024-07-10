@@ -19,7 +19,7 @@ from django.urls import path, include
 from .views import index
 from . import views
 from .views import reservation
-from .views import Trajet, comments
+from .views import Trajet, deleteT,modifierT
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,7 +31,8 @@ urlpatterns = [
     path('trajet/', views.trajets, name='trajet'),
     path('trajets/', views.create_trajet, name='trajet'),
     path('register/', views.register, name='register'),
-    path('commentaires/', views.comments, name='comments'),
-    
-  
+    path('trajet/<int:trajet_id>/supprimer/', views.deleteT, name='deleteT'),
+    path('reservation/<int:trajet_id>/createReservation/reservation', views.reservation, name='reservation'),
+    path('trajet/<int:trajet_id>/modifier/', views.modifierT, name='modifierT'),
+    path('comments/', views.commentaires, name='commentaires'),
 ]

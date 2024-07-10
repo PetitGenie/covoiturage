@@ -1,17 +1,31 @@
 {% extends 'index.html' %}
 {% block section %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'trajet.css' %}" >
 
-{% for trajet in trajets %}
-    <div>
-        <h4>Point_depart:</h4><p>{{ trajet.point_depart }}</p>
-        <h4>Destination:</h4><p>{{ trajet.destination }}</p>
-        <h4>Date:</h4><p>{{ trajet.date }}</p>
-        <h4>Places_disponibles:</h2><p>{{ trajet.places_disponibles }}</p>
-        <h4>Modele:</h4><p>{{ trajet.modele }}</p>
-        <h4>Plaque:</h4><p>{{ trajet.plaque }}</p>
-        
-        <a href="{% url 'reservation'  %}" class="cta-button">Réserver</a>
-    </div>
-{% endfor %} </br>
-<a href="/trajets" class="cta-button">cree un trajet</a></br>
+<div class="trajet-list">
+    {% for trajet in trajets %}
+    <section class="trajet-item {% if trajet.is_done %}done{% endif %}">
+        <section class="trajet-info">
+            <h1>Trajet n° {{ trajet.id }}</h1>
+            <h4>Point de départ:</h4><p>{{ trajet.point_depart }}</p>
+            <h4>Destination:</h4><p>{{ trajet.destination }}</p>
+            <h4>Date:</h4><p>{{ trajet.date }}</p>
+            <h4>Heure:</h4><p>{{ trajet.heure_depart }}</p>
+            <h4>Places disponibles:</h4><p>{{ trajet.places_disponibles }}</p>
+
+            {% if request.user == trajet.user %}
+            <div class="modifier-btn-container">
+                <a href="{% url 'modifierT' trajet.id %}" class="cta-button">Modifier</a>
+                <a href="{% url 'deleteT' trajet.id %}" class="cta-button" id="delete-button">Supprimer</a>
+            </div>
+            {% else %}
+            <a href="{% url 'reservation' %}" class="cta-button">Réserver</a>
+            {% endif %}
+        </section>
+    </section>
+    {% endfor %}
+</div>
+
+<a href="/trajets" class="cta-button">Créer un trajet</a>
 {% endblock section %}

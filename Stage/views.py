@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import LoginForm, ReserverForm, TrajetForm
+from .forms import LoginForm, ReserverForm, TrajetForm, CommentaireForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from covoiturage.models import Trajet, Reservation
 from datetime import datetime
+from django.contrib import messages
 
 def index(request):
    
@@ -61,32 +62,77 @@ def deconnexion(request):
     return redirect("/") 
          
 @login_required(login_url='/login/')
+
 def reservation(request):
     if request.user.is_authenticated:
         reservations = Reservation.objects.filter(user=request.user)
+        now = datetime.now()
+        trajets = Trajet.objects.filter(date__gte=now)
+
+        if request.method == 'POST':
+            # Récupérer les données du formulaire
+            trajet_id = request.POST.get('trajet')
+            places = int(request.POST.get('places'))
+            date = request.POST.get('date')
+
+            # Récupérer le trajet sélectionné
+            trajet = Trajet.objects.get(id=trajet_id)
+
+            # Vérifier si le nombre de places disponibles est suffisant
+            if places > trajet.places_disponibles:
+                messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
+                return redirect('reservation')
+
+            # Créer une nouvelle réservation
+            reservation = Reservation(
+                user=request.user,
+                trajet=trajet,
+                places=places,
+                date=date
+            )
+
+            reservation.save()
+
+            # Mettre à jour le nombre de places disponibles pour le trajet
+            trajet.places_disponibles -= places
+            trajet.save()
+
+
+            return redirect('reservation')
+
+        # Récupérer le trajet sélectionné (s'il y en a un)
+        selected_trajet = None
+        if 'trajet' in request.GET:
+            try:
+                selected_trajet = Trajet.objects.get(id=request.GET.get('trajet'))
+            except Trajet.DoesNotExist:
+                pass
+
     else:
         reservations = []
+        trajets = []
+        selected_trajet = None
 
-    context = {'reservations': reservations}
+    context = {
+        'reservations': reservations,
+        'trajets': trajets,
+        'selected_trajet': selected_trajet,
+    }
     return render(request, 'reserver.html', context)
 
-
-def createReservation(request, trajet_id):
-    trajet = get_object_or_404(Trajet, id=trajet_id)
-
-    if request.method == 'POST':
-        nom = request.POST['nom']
-        email = request.POST['email']
-
-        reservation = Reservation.objects.create(
-            trajet=trajet,
-            nom=nom,
-            email=email
-        )
-        return redirect('/reservation', reservation_id=reservation.id)
-
-    return render(request, 'reserver.html', {'trajet': trajet})
-
+def annuler_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    
+    
+    trajet = reservation.trajet
+    
+    trajet.places_disponibles += places
+    trajet.save()
+    
+    reservation.delete()
+    
+    return redirect('reservation')
+    
 def create_trajet(request):
     if request.method == 'POST':
         form = TrajetForm(request.POST)
@@ -105,10 +151,46 @@ def create_trajet(request):
 @login_required(login_url='/login/')
 def trajets(request):
     now = datetime.now()
-    trajets = Trajet.objects.filter(date__gte=now)
-
+    trajets = Trajet.objects.filter(date__gte=now, places_disponibles__gt=0)
+    
     context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
-def comments(request):
-    return render(request, 'commentaire.html')
+def modifierT(request, trajet_id):
+    trajet = get_object_or_404(Trajet, id=trajet_id, user=request.user)
+
+    if request.method == 'POST':
+        form = TrajetForm(request.POST, instance=trajet)
+        if form.is_valid():
+            trajet = form.save(commit=False)
+            trajet.user = request.user
+            trajet.save()
+            return redirect('modifierT', trajet_id=trajet.id)
+    else:
+        form = TrajetForm(instance=trajet)
+
+    return render(request, 'modifierT.html', {'form': form, 'trajet': trajet})
+
+def deleteT(request, trajet_id):
+    trajet = get_object_or_404(Trajet, id=trajet_id, user=request.user)
+    if request.method == 'POST':
+        form = TrajetForm(request.POST, instance=trajet)
+        trajet.delete()
+        return redirect('trajet')
+    return render(request, 'confDeleteT.html', {'trajet': trajet})
+
+def commentaires(request):
+    if request.method == 'POST':
+       form = CommentaireForm(request.POST)
+       if form.is_valid():
+          commentaire=form.save(commit=False)
+          commentaire.user= request.user
+          commentaire.save()
+          return redirect("/comments")
+            
+    else:
+        form = CommentaireForm()
+    
+    context = {'form': form}
+    return render(request, 'commentaire.html', context)   
+  
