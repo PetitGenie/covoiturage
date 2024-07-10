@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from covoiturage.models import Trajet, Reservation
+from covoiturage.models import Trajet, Reservation, Commentaire
 from datetime import datetime
 from django.contrib import messages
 
@@ -181,16 +181,15 @@ def deleteT(request, trajet_id):
 
 def commentaires(request):
     if request.method == 'POST':
-       form = CommentaireForm(request.POST)
-       if form.is_valid():
-          commentaire=form.save(commit=False)
-          commentaire.user= request.user
-          commentaire.save()
-          return redirect("/comments")
-            
+        form = CommentaireForm(request.POST)
+        if form.is_valid():
+            commentaire = form.save(commit=False)
+            commentaire.user = request.user
+            commentaire.save()
+            return redirect("/comments")
     else:
         form = CommentaireForm()
     
     context = {'form': form}
-    return render(request, 'commentaire.html', context)   
+    return render(request, 'commentaire.html', context)
   

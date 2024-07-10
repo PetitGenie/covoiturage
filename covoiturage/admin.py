@@ -36,6 +36,8 @@ class ReservationAdmin(admin.ModelAdmin):
 
 admin.site.register(Reservation, ReservationAdmin)
 admin.site.register(Vehicule)
-admin.site.register(Commentaire)
+class CommentaireAdmin(admin.ModelAdmin):
+      list_display=('user', 'trajet','commentaire','note')
+admin.site.register(Commentaire, CommentaireAdmin)      
 admin.site.register(Notification)
 admin.site.register(Paiement)

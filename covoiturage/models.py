@@ -49,7 +49,7 @@ class Reservation(models.Model):
 class Commentaire(models.Model):
     commentaire = models.TextField()
     note = models.IntegerField()
-    client = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
