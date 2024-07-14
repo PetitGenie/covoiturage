@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{% static 'ajouterT.css' %}">
 
     <form method="POST">
-        <h1>Formulaire</h1>
+        <h1>Commentaire</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Enregistrer</button>

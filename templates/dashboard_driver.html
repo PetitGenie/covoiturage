@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block section %}
+<h2>Your Recent Trips</h2>
+<div class="trips-list"> 
+  
+  {% for trajet in trajets %}
+  <article class="trips-item"> 
+      <div class="trips-details">
+            <h4>Point de départ:</h4><p>{{ trajet.point_depart }}</p>
+            <h4>Destination:</h4><p>{{ trajet.destination }}</p>
+            <h4>Date:</h4><p>{{ trajet.date }}</p>
+            <h4>Heure:</h4><p>{{ trajet.heure_depart }}</p>
+            <h4>Places disponibles:</h4><p>{{ trajet.places_disponibles }}</p>
+            
+      </div>
+  </article> 
+  {% endfor %}       
+</div>
+        <a href="/dd/trajets" class="cta-button">Créer un trajet</a>
+{% endblock section %}

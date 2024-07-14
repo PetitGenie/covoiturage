@@ -3,8 +3,13 @@ from django.contrib.auth.models import User
 
 
 class Vehicule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     modele = models.CharField(max_length=35, null=True)
     plaque = models.CharField(max_length=10, null=True)
+    color = models.CharField(max_length=40, null=True)
+
+    def __str__(self):
+        return f"{self.modele} - {self.plaque}"
 
 class Trajet(models.Model):
     point_depart = models.CharField(max_length=255)
@@ -13,12 +18,14 @@ class Trajet(models.Model):
     places_disponibles = models.IntegerField()
     date = models.DateField(editable=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, editable=False)
-    done = models.BooleanField(default=False, editable=False)
+    status = models.CharField(max_length=20, default=('completed', 'Terminé'),choices=[('ongoing', 'En cours'), ('completed', 'Terminé')])
    
     def __str__(self):
         return f"{self.point_depart} - {self.destination}"
 
-
+class Categorie(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_driver = models.BooleanField(default=False)
 
 class Reservation(models.Model):
     STATUT_CHOICES = (

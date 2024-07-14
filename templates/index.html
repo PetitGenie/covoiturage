@@ -24,8 +24,10 @@
                         <li><a href="/reservation">Reservation</a></li>
                         <li><a href='/comments'>Commentaires</a></li>
                         <li>{{ user.username | upper }}</li>
+                        <li><a href="{% url 'dashboard_driver' %}">Devenir conducteur</a></li>
                         <li><a href="/logout">Se deconnecter</a></li>
-                    {% endif %} 
+                    {% endif %}
+                    
                 </ul>
             </nav>
         </header>

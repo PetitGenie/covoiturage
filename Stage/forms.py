@@ -1,5 +1,5 @@
 from django import forms
-from covoiturage.models import Trajet, User, Commentaire
+from covoiturage.models import Trajet, User, Commentaire, Vehicule
 
 class LoginForm(forms.Form):
     username= forms.CharField()
@@ -50,8 +50,15 @@ class CommentaireForm(forms.Form):
     note = forms.IntegerField()
 
 
+class CarForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.filter())
+    modele = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form_style'}))
+    plaque = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'class': 'form_style'}))
+    color = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'class': 'form_style'}))
 
-
+    class Meta:
+        model = Vehicule
+        fields = ['modele', 'plaque', 'color']
 
 
 

@@ -1,19 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import LoginForm, ReserverForm, TrajetForm, CommentaireForm
+from .forms import LoginForm, ReserverForm, TrajetForm, RegisterForm, CommentaireForm, CarForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from covoiturage.models import Trajet, Reservation, Commentaire
+from covoiturage.models import Trajet, Reservation, Commentaire, Categorie, Vehicule
 from datetime import datetime
 from django.contrib import messages
 
 def index(request):
    
     return render(request, "index.html", locals()) 
-
-from django.shortcuts import render, redirect
-from .forms import RegisterForm
 
 def register(request):
     if request.method == 'POST':
@@ -140,7 +137,7 @@ def create_trajet(request):
             trajet=form.save(commit=False)
             trajet.user= request.user
             trajet.save()
-            return redirect("/trajets")
+            return redirect("/dd/trajets")
             
     else:
         form = TrajetForm()
@@ -192,4 +189,31 @@ def commentaires(request):
     
     context = {'form': form}
     return render(request, 'commentaire.html', context)
-  
+
+def dashboard_driver(request):
+    trajets = Trajet.objects.filter(user=request.user)
+    
+    context = {'trajets': trajets}
+
+    return render(request, 'dashboard_driver.html', context)
+
+def cars(request):
+    vehicules = Vehicule.objects.filter(request=user.username)
+    
+    context = {'vehicules': vehicules}
+    return render(request, 'dashboard_driver.html', context)
+
+def addCar(request):
+    if request.method == 'POST':
+        form = CarForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Vehicle added successfully!')
+            return render('cars')
+    else:
+        form = CarForm()
+    return render(request, 'vehicule.html', {'form': form})
+
+def cars(request):
+    vehicles = Vehicule.objects.all()
+    return render(request, 'vehicule.html', {'vehicles': vehicles})    

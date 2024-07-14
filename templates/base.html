@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Driver</title>
+    <link rel="stylesheet" href="{% static 'dd.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/dashboard_driver">Trajets</a></li>
+                <li><a href="/vehicle/add">Mes Vehicules</a></li>
+                <li>{{ user.username | upper }}</li>
+                <li><a href="/">Devenir passager</a></li>
+            </ul>
+        </nav>
+    </header>
+{% block section %}
+    <main>
+
+    </main>
+{% endblock %}
+    <footer>
+        <p>&copy; 2024 Driver Dashboard. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

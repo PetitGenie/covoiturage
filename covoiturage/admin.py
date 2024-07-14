@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Vehicule, Trajet, Reservation, Commentaire, Notification, Paiement
 
 class TrajetAdmin(admin.ModelAdmin):
-    list_display = ('point_depart', 'destination', 'heure_depart', 'date','places_disponibles','user','done')
+    list_display = ('point_depart', 'destination', 'heure_depart', 'date','places_disponibles','user','status')
     list_filter = ('heure_depart', 'user')
     search_fields = ('point_depart', 'destination')
 
@@ -35,6 +35,8 @@ class ReservationAdmin(admin.ModelAdmin):
     list_display = ('user', 'trajet','places','date', 'avance_payee')
 
 admin.site.register(Reservation, ReservationAdmin)
+class VehiculeAdmin(admin.ModelAdmin):
+    list_display=('modele', 'plaque')
 admin.site.register(Vehicule)
 class CommentaireAdmin(admin.ModelAdmin):
       list_display=('user', 'trajet','commentaire','note')
