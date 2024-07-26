@@ -9,7 +9,7 @@ class Vehicule(models.Model):
     color = models.CharField(max_length=40, null=True)
 
     def __str__(self):
-        return f"{self.modele} - {self.plaque}"
+        return f"{self.modele} - {self.plaque} - {self.color}"
 
 class Trajet(models.Model):
     point_depart = models.CharField(max_length=255)
@@ -54,13 +54,13 @@ class Reservation(models.Model):
         return f"{self.user} - {self.trajet}"
 
 class Commentaire(models.Model):
-    commentaire = models.TextField()
+    contenu = models.TextField()
     note = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.commentaire
+        return self.contenu
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

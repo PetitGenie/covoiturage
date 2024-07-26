@@ -116,8 +116,8 @@ def reservation(request):
         'selected_trajet': selected_trajet,
     }
     return render(request, 'reserver.html', context)
-
-def annuler_reservation(request, reservation_id):
+'''
+def annuler_resvation(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
     
     
@@ -129,7 +129,7 @@ def annuler_reservation(request, reservation_id):
     reservation.delete()
     
     return redirect('reservation')
-    
+    '''
 def create_trajet(request):
     if request.method == 'POST':
         form = TrajetForm(request.POST)
@@ -183,12 +183,21 @@ def commentaires(request):
             commentaire = form.save(commit=False)
             commentaire.user = request.user
             commentaire.save()
-            return redirect("/comments")
+            return redirect('/comments')
     else:
         form = CommentaireForm()
-    
-    context = {'form': form}
+    context = {'form': form}    
+
     return render(request, 'commentaire.html', context)
+
+def comments(request):
+    comments = Commentaire.objects.all()
+    
+    context = {
+        'comments': comments
+    }
+    
+    return render(request, 'commentaire.html', context)    
 
 def dashboard_driver(request):
     trajets = Trajet.objects.filter(user=request.user)
@@ -197,23 +206,23 @@ def dashboard_driver(request):
 
     return render(request, 'dashboard_driver.html', context)
 
-def cars(request):
-    vehicules = Vehicule.objects.filter(request=user.username)
-    
-    context = {'vehicules': vehicules}
-    return render(request, 'dashboard_driver.html', context)
 
 def addCar(request):
     if request.method == 'POST':
         form = CarForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Vehicle added successfully!')
-            return render('cars')
+            # Vérifier si le véhicule est déjà enregistré
+            plaque = form.cleaned_data['plaque']
+            if not Vehicule.objects.filter(plaque=plaque).exists():
+                form.save()
+                messages.success(request, 'Véhicule ajouté avec succès!')
+            else:
+                messages.warning(request, 'Ce véhicule est déjà enregistré.')
+            return redirect('dashboard_driver')
     else:
         form = CarForm()
     return render(request, 'vehicule.html', {'form': form})
 
 def cars(request):
     vehicles = Vehicule.objects.all()
-    return render(request, 'vehicule.html', {'vehicles': vehicles})    
+    return render(request, 'cars.html', {'vehicles': vehicles})

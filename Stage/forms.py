@@ -43,11 +43,14 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form_style'}))
     password = forms.CharField(max_length=100, widget=forms.PasswordInput(attrs={'class': 'form_style'}))
     
-class CommentaireForm(forms.Form):
+class CommentaireForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=User.objects.filter())
     trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
     contenu= forms.CharField()
     note = forms.IntegerField()
+    class Meta:
+        model = Commentaire
+        fields = '__all__'
 
 
 class CarForm(forms.ModelForm):

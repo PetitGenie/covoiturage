@@ -10,4 +10,20 @@
         {{ form.as_p }}
         <button type="submit">Enregistrer</button>
     </form>
+    <div class="comments">
+      <h1>Mes commentaires</h1>
+      {% if comments %}
+      <ul>
+        {% for comment in comments %}
+        <li>
+          <p>{{ comment.contenu }}</p>
+          <p>Note : {{ comment.note }}</p>
+          <p>Publié par {{ comment.user }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>Vous n'avez pas encore publié de commentaire.</p>
+      {% endif %}
+    </div>
 {% endblock section %}

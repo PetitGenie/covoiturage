@@ -1,0 +1,63 @@
+
+/* Container styles */
+.vehicles-container {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Vehicle card styles */
+  .vehicle-card {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+  }
+  
+  .vehicle-card h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .vehicle-card p {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  /* Buttons styles */
+  .actions-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .action-btn {
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .action-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .action-btn.delete {
+    background-color: #f44336;
+  }
+  
+  .action-btn.delete:hover {
+    background-color: #e53935;
+  }

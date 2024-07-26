@@ -20,11 +20,11 @@
                     {% if user.is_anonymous %}
                         <li><a href="/register">Creer un compte</a></li>
                         <li><a href="/login">Se connecter</a></li>
-                    {% else %}   
+                     {% else %}   
                         <li><a href="/reservation">Reservation</a></li>
                         <li><a href='/comments'>Commentaires</a></li>
                         <li>{{ user.username | upper }}</li>
-                        <li><a href="{% url 'dashboard_driver' %}">Devenir conducteur</a></li>
+                        <li><a href="{% url 'addCar' %}">Devenir conducteur</a></li> 
                         <li><a href="/logout">Se deconnecter</a></li>
                     {% endif %}
                     
@@ -70,7 +70,11 @@
                 <section id="connect" class="connect">
                     <h2>Utiliser JANA NANJE dès maintenant!</h2>
                     <p>Utiliser notre application dès aujourd'hui et profitez d'une expérience de covoiturage pratique et fiable.</p>
+                    {% if user.is_anonymous %}
                     <a href="/login" class="cta-button">SE CONNECTER</a>
+                    {% else %}
+                    <a href="/logout" class="cta-button">SE DECONNECTER</a>
+                    {% endif %}
                 </section>
                 <section id="contact" class="contact">
                     <h2>Contactez-nous</h2>

@@ -36,10 +36,10 @@ class ReservationAdmin(admin.ModelAdmin):
 
 admin.site.register(Reservation, ReservationAdmin)
 class VehiculeAdmin(admin.ModelAdmin):
-    list_display=('modele', 'plaque')
+    list_display=('modele', 'plaque','color')
 admin.site.register(Vehicule)
 class CommentaireAdmin(admin.ModelAdmin):
-      list_display=('user', 'trajet','commentaire','note')
+      list_display=('user', 'trajet','contenu','note')
 admin.site.register(Commentaire, CommentaireAdmin)      
 admin.site.register(Notification)
 admin.site.register(Paiement)

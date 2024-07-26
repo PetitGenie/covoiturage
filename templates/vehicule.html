@@ -1,13 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 {% load static %}
 {% block section %}
 
   <link rel="stylesheet" href="{% static 'ajouterT.css' %}">
 
-    <form method="POST" action="vehicle/add">
+    <form method="POST">
         <h1>Vehicule</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Enregistrer</button>
     </form>
+
 {% endblock section %}

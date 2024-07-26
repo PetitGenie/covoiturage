@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block section %}
+
+<link rel="stylesheet" href="{% static 'car.css' %}">
+
+<div class="vehicles-container">
+    <h1>Mes véhicules</h1>
+    {% for vehicle in vehicles %}
+    <div class="vehicle-card">
+      <p><strong>{{ vehicle.modele }}</strong></p>
+      <p>Plaque : {{ vehicle.plaque }}</p>
+      <p>Couleur : {{ vehicle.color }}</p>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock section%}  
