@@ -10,7 +10,7 @@ class ReserverForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all())
     trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
     places = forms.DecimalField()
-
+    point_de_rencontre = forms.DecimalField()
 
 class TrajetForm(forms.ModelForm):
     heure_depart = forms.TimeField(
@@ -33,7 +33,8 @@ class TrajetForm(forms.ModelForm):
             }
         )
     )
-
+    vehicule= forms.ModelChoiceField(queryset=Vehicule.objects.all())
+    passe_par= forms.CharField()
     class Meta:
         model = Trajet
         fields = '__all__'
@@ -62,6 +63,7 @@ class CarForm(forms.ModelForm):
     class Meta:
         model = Vehicule
         fields = ['modele', 'plaque', 'color']
+
 
 
 

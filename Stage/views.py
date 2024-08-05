@@ -6,7 +6,9 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from covoiturage.models import Trajet, Reservation, Commentaire, Categorie, Vehicule
 from datetime import datetime
+from django.utils import timezone
 from django.contrib import messages
+from datetime import datetime, timedelta
 
 def index(request):
    
@@ -59,46 +61,64 @@ def deconnexion(request):
     return redirect("/") 
          
 @login_required(login_url='/login/')
-
 def reservation(request):
     if request.user.is_authenticated:
         reservations = Reservation.objects.filter(user=request.user)
         now = datetime.now()
-        trajets = Trajet.objects.filter(date__gte=now)
+        trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
+
+        # Mettre à jour le statut des réservations
+        for reservation in reservations:
+            if reservation.trajet.date < now.date():
+                reservation.statut = 'terminé'
+                reservation.save()
+
+
+        selected_trajet = None
 
         if request.method == 'POST':
             # Récupérer les données du formulaire
             trajet_id = request.POST.get('trajet')
             places = int(request.POST.get('places'))
-            date = request.POST.get('date')
+            timestamp = request.POST.get('timestamp')
+            point_de_rencontre = request.POST.get('point_de_rencontre')
 
             # Récupérer le trajet sélectionné
             trajet = Trajet.objects.get(id=trajet_id)
+            selected_trajet = trajet
 
-            # Vérifier si le nombre de places disponibles est suffisant
-            if places > trajet.places_disponibles:
-                messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
-                return redirect('reservation')
+            # Vérifier si l'utilisateur a déjà une réservation pour ce trajet
+            existing_reservation = Reservation.objects.filter(user=request.user, trajet=trajet).first()
 
-            # Créer une nouvelle réservation
-            reservation = Reservation(
-                user=request.user,
-                trajet=trajet,
-                places=places,
-                date=date
-            )
+            # Si l'utilisateur a déjà une réservation, augmenter le nombre de places
+            if existing_reservation:
+                existing_reservation.places +=places
+                existing_reservation.save()
 
-            reservation.save()
+            # Sinon, créer une nouvelle réservation
+            else:
+                # Vérifier si le nombre de places disponibles est suffisant
+                if places > trajet.places_disponibles:
+                    messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
+                    return redirect('reservation')
 
-            # Mettre à jour le nombre de places disponibles pour le trajet
-            trajet.places_disponibles -= places
-            trajet.save()
+                # Créer une nouvelle réservation
+                reservation = Reservation(
+                    user=request.user,
+                    trajet=trajet,
+                    places=places,
+                    point_de_rencontre=point_de_rencontre,
+                    timestamp=timestamp,
+                    statut='confirmé'
+                )
 
+                reservation.save()
 
-            return redirect('reservation')
+                # Mettre à jour le nombre de places disponibles pour le trajet
+                trajet.places_disponibles -= places
+                trajet.save()
 
         # Récupérer le trajet sélectionné (s'il y en a un)
-        selected_trajet = None
         if 'trajet' in request.GET:
             try:
                 selected_trajet = Trajet.objects.get(id=request.GET.get('trajet'))
@@ -109,6 +129,9 @@ def reservation(request):
         reservations = []
         trajets = []
         selected_trajet = None
+
+        return redirect('reservation')
+
 
     context = {
         'reservations': reservations,
@@ -138,6 +161,7 @@ def create_trajet(request):
             trajet.user= request.user
             trajet.save()
             return redirect("/dd/trajets")
+            
             
     else:
         form = TrajetForm()
@@ -169,35 +193,36 @@ def modifierT(request, trajet_id):
     return render(request, 'modifierT.html', {'form': form, 'trajet': trajet})
 
 def deleteT(request, trajet_id):
-    trajet = get_object_or_404(Trajet, id=trajet_id, user=request.user)
-    if request.method == 'POST':
-        form = TrajetForm(request.POST, instance=trajet)
-        trajet.delete()
-        return redirect('trajet')
-    return render(request, 'confDeleteT.html', {'trajet': trajet})
+    trajet = get_object_or_404(Trajet, id=trajet_id)
+    Reservation.objects.filter(trajet=trajet).update(statut='annulé')
+    return redirect('dashboard_driver')
+
+
 
 def commentaires(request):
     if request.method == 'POST':
         form = CommentaireForm(request.POST)
         if form.is_valid():
-            commentaire = form.save(commit=False)
-            commentaire.user = request.user
-            commentaire.save()
-            return redirect('/comments')
+            note = form.cleaned_data['note']
+            if note < 1 or note > 10:
+                form.add_error('note', 'La note doit être comprise entre 1 et 10.')
+            else:
+                comment = form.save(commit=False)
+                comment.user = request.user
+                comment.save()
+                return redirect('/comment')
     else:
         form = CommentaireForm()
-    context = {'form': form}    
+
+        comments = Commentaire.objects.all()
+    context = {
+        'form': form,
+        'comments': comments
+    }
 
     return render(request, 'commentaire.html', context)
 
-def comments(request):
-    comments = Commentaire.objects.all()
-    
-    context = {
-        'comments': comments
-    }
-    
-    return render(request, 'commentaire.html', context)    
+   
 
 def dashboard_driver(request):
     trajets = Trajet.objects.filter(user=request.user)
@@ -205,6 +230,13 @@ def dashboard_driver(request):
     context = {'trajets': trajets}
 
     return render(request, 'dashboard_driver.html', context)
+
+def verify(request):
+    try:
+        vehicle = request.user.vehicle
+        return redirect('dashboard_driver')
+    except Vehicule.DoesNotExist:
+        return redirect('addCar')
 
 
 def addCar(request):
@@ -226,3 +258,4 @@ def addCar(request):
 def cars(request):
     vehicles = Vehicule.objects.all()
     return render(request, 'cars.html', {'vehicles': vehicles})
+

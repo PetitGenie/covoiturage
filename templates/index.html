@@ -9,9 +9,9 @@
 <body>
     <div class="wrapper">
         <header>
-            <nav class="vertical-nav">
+            <nav class="nav">
                 <div class="logo">
-                    <img src="{% static 'logo1.jpeg' %}" alt="Covoiturage">
+                    <img src="{% static 'logo1.1.jpeg' %}" alt="Covoiturage">
                 </div>
                 <ul class="nav-links">
                     <li><a href="/">À propos</a></li>
@@ -21,10 +21,11 @@
                         <li><a href="/register">Creer un compte</a></li>
                         <li><a href="/login">Se connecter</a></li>
                      {% else %}   
+                        <li>///</li>
                         <li><a href="/reservation">Reservation</a></li>
                         <li><a href='/comments'>Commentaires</a></li>
                         <li>{{ user.username | upper }}</li>
-                        <li><a href="{% url 'addCar' %}">Devenir conducteur</a></li> 
+                        <li><a href="{% url 'verify' %}">Devenir conducteur</a></li> 
                         <li><a href="/logout">Se deconnecter</a></li>
                     {% endif %}
                     

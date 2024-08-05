@@ -9,9 +9,11 @@
         <section class="trajet-info">
             <h1>Trajet n° {{ trajet.id }}</h1>
             <h4>Point de départ:</h4><p>{{ trajet.point_depart }}</p>
+            <h4>Passe par:</h4><p>{{ trajet.passe_par }}</p>
             <h4>Destination:</h4><p>{{ trajet.destination }}</p>
             <h4>Date:</h4><p>{{ trajet.date }}</p>
             <h4>Heure:</h4><p>{{ trajet.heure_depart }}</p>
+            <h4>Vehicule:</h4><p>{{ trajet.vehicule }}</p>
             <h4>Places disponibles:</h4><p>{{ trajet.places_disponibles }}</p>
 
             {% if request.user == trajet.user %}
@@ -23,6 +25,7 @@
             <a href="{% url 'reservation' %}" class="cta-button">Réserver</a>
             {% endif %}
         </section>
+        
     </section>
     {% endfor %}
 </div>

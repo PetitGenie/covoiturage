@@ -2,26 +2,29 @@
 {% load static %}
 {% block section %}
 
-  <link rel="stylesheet" href="{% static 'ajouterT.css' %}">
+  <link rel="stylesheet" href="{% static 'comment.css' %}">
 
     <form method="POST">
         <h1>Commentaire</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Enregistrer</button>
-    </form>
+    </form><br><br>
+----------------------------->>------------------------------------>>-------------------------------------->>-------------------------------------->>--------------------------------------->>-------------------------------------    
     <div class="comments">
-      <h1>Mes commentaires</h1>
+      <h1>Commentaires</h1>
       {% if comments %}
-      <ul>
+      
         {% for comment in comments %}
-        <li>
+     <article class="comments-item"> 
+        <div class="comments-details">
           <p>{{ comment.contenu }}</p>
-          <p>Note : {{ comment.note }}</p>
-          <p>Publié par {{ comment.user }}</p>
-        </li>
+          <h4>Note : {{ comment.note }}</h4>
+          <h4>Publié par : {{ comment.user }}</h4>
+        </div>
+     </article>   
         {% endfor %}
-      </ul>
+    </div> 
       {% else %}
       <p>Vous n'avez pas encore publié de commentaire.</p>
       {% endif %}

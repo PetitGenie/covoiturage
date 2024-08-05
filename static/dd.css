@@ -67,16 +67,25 @@
       .trips-details p {
         margin: 0;
       }
-    .cta-button {
+    .cta-button-d {
         align-self: flex-end;
-        padding: 0.75rem 1.5rem;
-        background-color: #007bff;
+        padding: 0.15rem 0.5rem;
+        background-color: #ec2d0c;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
       }
       
+      .cta-button-m {
+        align-self: flex-end;
+        padding: 0.15rem 0.5rem;
+        background-color: #04f350;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
 
     footer {
         background-color: #333;
