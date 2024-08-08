@@ -2,3 +2,15 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'fact.css' %}" >
 
+
+{% block content %}
+  <h1>Facture de paiement</h1>
+
+  <p>Trajet : {{ trajet.point_depart }} - {{ trajet.destination }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Payer</button>
+  </form>
+{% endblock %}

@@ -6,6 +6,7 @@
 
 <div class="vehicles-container">
     <h1>Mes véhicules</h1>
+    {% if vehicles %}
     {% for vehicle in vehicles %}
     <div class="vehicle-card">
       <p><strong>{{ vehicle.modele }}</strong></p>
@@ -13,5 +14,9 @@
       <p>Couleur : {{ vehicle.color }}</p>
     </div>
     {% endfor %}
+    {% else %}
+    <p>Vous n'avez pas encore de véhicule enregistré.</p>
+    {% endif %}
   </div>
-{% endblock section%}  
+  <a href="vehicle/add/" >Ajouter une voiture </a> 
+{% endblock section%}

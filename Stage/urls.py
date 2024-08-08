@@ -38,6 +38,8 @@ urlpatterns = [
    
     path('verify/', views.verify, name='verify'),
     path('vehicle/add/', views.addCar, name='addCar'),
+    path('cars/vehicle/add/', views.addCar, name='addCar'),
     path('cars/', views.cars, name='cars'),
     path('dashboard_driver/', views.dashboard_driver, name='dashboard_driver'),
+    path('paiement/<int:trajet_id>/', views.facture, name='facture'),
 ]

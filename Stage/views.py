@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import LoginForm, ReserverForm, TrajetForm, RegisterForm, CommentaireForm, CarForm
+from .forms import LoginForm, ReserverForm, TrajetForm, RegisterForm, CommentaireForm, CarForm, PaiementForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from covoiturage.models import Trajet, Reservation, Commentaire, Categorie, Vehicule
+from covoiturage.models import Trajet, Reservation, Commentaire, Categorie, Vehicule, Paiement
 from datetime import datetime
 from django.utils import timezone
 from django.contrib import messages
@@ -76,6 +76,7 @@ def reservation(request):
 
         selected_trajet = None
 
+
         if request.method == 'POST':
             # Récupérer les données du formulaire
             trajet_id = request.POST.get('trajet')
@@ -85,16 +86,14 @@ def reservation(request):
 
             # Récupérer le trajet sélectionné
             trajet = Trajet.objects.get(id=trajet_id)
-            selected_trajet = trajet
 
             # Vérifier si l'utilisateur a déjà une réservation pour ce trajet
             existing_reservation = Reservation.objects.filter(user=request.user, trajet=trajet).first()
 
             # Si l'utilisateur a déjà une réservation, augmenter le nombre de places
             if existing_reservation:
-                existing_reservation.places +=places
+                existing_reservation.places += places
                 existing_reservation.save()
-
             # Sinon, créer une nouvelle réservation
             else:
                 # Vérifier si le nombre de places disponibles est suffisant
@@ -111,12 +110,11 @@ def reservation(request):
                     timestamp=timestamp,
                     statut='confirmé'
                 )
-
                 reservation.save()
 
-                # Mettre à jour le nombre de places disponibles pour le trajet
-                trajet.places_disponibles -= places
-                trajet.save()
+            # Mettre à jour le nombre de places disponibles pour le trajet
+            trajet.places_disponibles -= places
+            trajet.save()
 
         # Récupérer le trajet sélectionné (s'il y en a un)
         if 'trajet' in request.GET:
@@ -186,7 +184,7 @@ def modifierT(request, trajet_id):
             trajet = form.save(commit=False)
             trajet.user = request.user
             trajet.save()
-            return redirect('modifierT', trajet_id=trajet.id)
+            return render(request,'dashboard_driver.html')
     else:
         form = TrajetForm(instance=trajet)
 
@@ -212,7 +210,7 @@ def commentaires(request):
                 comment.save()
                 return redirect('/comment')
     else:
-        form = CommentaireForm()
+        form = CommentaireForm(request)
 
         comments = Commentaire.objects.all()
     context = {
@@ -231,31 +229,62 @@ def dashboard_driver(request):
 
     return render(request, 'dashboard_driver.html', context)
 
-def verify(request):
-    try:
-        vehicle = request.user.vehicle
-        return redirect('dashboard_driver')
-    except Vehicule.DoesNotExist:
-        return redirect('addCar')
 
+def verify(request):
+    user = request.user
+
+    # Vérifier si l'utilisateur a au moins une voiture enregistrée
+    if Vehicule.objects.filter(user=user).exists():
+        # Si l'utilisateur a une voiture, le rediriger vers la page des trajets
+        return redirect('dashboard_driver')
+    else:
+        # Si l'utilisateur n'a pas de voiture, le rediriger vers la page d'ajout de voiture
+        return redirect('addCar')
 
 def addCar(request):
     if request.method == 'POST':
-        form = CarForm(request.POST)
+        form = CarForm(request, data=request.POST)
         if form.is_valid():
-            # Vérifier si le véhicule est déjà enregistré
+            # Récupérer les données du formulaire
             plaque = form.cleaned_data['plaque']
-            if not Vehicule.objects.filter(plaque=plaque).exists():
-                form.save()
+            modele = form.cleaned_data['modele']
+            color = form.cleaned_data['color']
+            
+            # Vérifier si le véhicule est déjà enregistré
+            try:
+                vehicle = Vehicule.objects.get(plaque=plaque)
+                messages.warning(request, f'Le véhicule {modele} avec la plaque {plaque} est déjà enregistré.')
+            except Vehicule.DoesNotExist:
+                # Créer un nouveau véhicule et le sauvegarder
+                vehicle = Vehicule(
+                    user=request.user,
+                    plaque=plaque,
+                    modele=modele,
+                    color=color
+                )
+                vehicle.save()
                 messages.success(request, 'Véhicule ajouté avec succès!')
-            else:
-                messages.warning(request, 'Ce véhicule est déjà enregistré.')
+            
             return redirect('dashboard_driver')
     else:
-        form = CarForm()
+        form = CarForm(request)
+    
     return render(request, 'vehicule.html', {'form': form})
-
+    
 def cars(request):
-    vehicles = Vehicule.objects.all()
+    vehicles = Vehicule.objects.filter(user=request.user)
     return render(request, 'cars.html', {'vehicles': vehicles})
 
+def facture(request, trajet_id):
+    trajet = Trajet.objects.get(id=trajet_id)
+    if request.method == 'POST':
+        form = PaiementForm(request.POST)
+        if form.is_valid():
+            paiement = form.save(commit=False)
+            paiement.trajet = trajet
+            paiement.user = request.user
+            paiement.save()
+            return redirect('index')
+    else:
+        form = PaiementForm()
+    return render(request, 'facture.html', {'form': form, 'trajet': trajet})
