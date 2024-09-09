@@ -83,6 +83,7 @@ def reservation(request):
             places = int(request.POST.get('places'))
             timestamp = request.POST.get('timestamp')
             point_de_rencontre = request.POST.get('point_de_rencontre')
+            image = request.POST.get('image')
 
             # Récupérer le trajet sélectionné
             trajet = Trajet.objects.get(id=trajet_id)
@@ -108,7 +109,8 @@ def reservation(request):
                     places=places,
                     point_de_rencontre=point_de_rencontre,
                     timestamp=timestamp,
-                    statut='confirmé'
+                    statut='confirmé',
+                    image=image
                 )
                 reservation.save()
 
@@ -137,41 +139,51 @@ def reservation(request):
         'selected_trajet': selected_trajet,
     }
     return render(request, 'reserver.html', context)
-'''
-def annuler_resvation(request, reservation_id):
-    reservation = get_object_or_404(Reservation, id=reservation_id)
     
+@login_required
+def annuler_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    
+    if reservation.statut == 'terminé':
+        messages.error(request, "Vous ne pouvez pas annuler une réservation terminée.")
+        return redirect('reservation')
     
     trajet = reservation.trajet
-    
-    trajet.places_disponibles += places
+    trajet.places_disponibles += reservation.places
     trajet.save()
     
-    reservation.delete()
+    reservation.statut = 'annulé'
+    reservation.save()
     
+    messages.success(request, "Réservation annulée avec succès.")
     return redirect('reservation')
-    '''
+
 def create_trajet(request):
     if request.method == 'POST':
-        form = TrajetForm(request.POST)
+        form = TrajetForm(request.POST, user=request.user)
         if form.is_valid():
-            trajet=form.save(commit=False)
-            trajet.user= request.user
+            trajet = form.save(commit=False)
+            trajet.user_connecte = request.user
+            
+            # Vérification de la date pour définir le statut
+            if trajet.date < timezone.now().date():
+                trajet.status = 'terminé'
+            else:
+                trajet.status = 'en cours'  # Statut par défaut
+            
             trajet.save()
-            return redirect("/dd/trajets")
-            
-            
+            return redirect('dashboard_driver')  # Remplacez par votre page de succès
     else:
-        form = TrajetForm()
-    
-    context = {'form': form}
-    return render(request, 'ajouterTrajet.html', context)
+        form = TrajetForm(user=request.user)
+
+    return render(request, 'ajouterTrajet.html', {'form': form})
 
 @login_required(login_url='/login/')
 def trajets(request):
-    now = datetime.now()
-    trajets = Trajet.objects.filter(date__gte=now, places_disponibles__gt=0)
-    
+    now = timezone.now()
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
+    for trajet in trajets:
+        trajet.update_status()
     context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
@@ -199,26 +211,16 @@ def deleteT(request, trajet_id):
 
 def commentaires(request):
     if request.method == 'POST':
-        form = CommentaireForm(request.POST)
+        form = CommentaireForm(request.POST, user=request.user)
         if form.is_valid():
-            note = form.cleaned_data['note']
-            if note < 1 or note > 10:
-                form.add_error('note', 'La note doit être comprise entre 1 et 10.')
-            else:
-                comment = form.save(commit=False)
-                comment.user = request.user
-                comment.save()
-                return redirect('/comment')
+            commentaire = form.save(commit=False)
+            commentaire.user = request.user 
+            commentaire.save()
+            return redirect('comments')  
     else:
-        form = CommentaireForm(request)
+        form = CommentaireForm(user=request.user)
 
-        comments = Commentaire.objects.all()
-    context = {
-        'form': form,
-        'comments': comments
-    }
-
-    return render(request, 'commentaire.html', context)
+    return render(request, 'commentaire.html', {'form': form})
 
    
 
@@ -248,6 +250,7 @@ def addCar(request):
             # Récupérer les données du formulaire
             plaque = form.cleaned_data['plaque']
             modele = form.cleaned_data['modele']
+            places = form.cleaned_data['places']
             color = form.cleaned_data['color']
             
             # Vérifier si le véhicule est déjà enregistré
@@ -260,6 +263,7 @@ def addCar(request):
                     user=request.user,
                     plaque=plaque,
                     modele=modele,
+                    places=places,
                     color=color
                 )
                 vehicle.save()

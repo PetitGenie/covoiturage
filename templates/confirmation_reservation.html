@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+{% block section %}
+<h2>Confirmation de réservation</h2>
+
+<div class="reservation-info">
+  <h4>Trajet:</h4><p>{{ reservation.trajet }}</p>
+  <h4>Date:</h4><p>{{ reservation.date }}</p>
+  <h4>Nom:</h4><p>{{ reservation.user.name }}</p>
+  <h4>Email:</h4><p>{{ reservation.user.email }}</p>
+  <h4>Téléphone:</h4><p>{{ reservation.user.telephone }}</p>
+</div>
+
+<p>Merci pour votre réservation. Nous vous avons envoyé un e-mail de confirmation.</p>
+{% endblock section %}

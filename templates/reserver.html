@@ -3,7 +3,7 @@
 {% block section %}
 <link rel="stylesheet" type="text/css" href="{% static 'reserver.css' %}" >
 <div class="reservation-form-container">
-  <form class="reservation-form" method="POST">
+  <form class="reservation-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <h1>Creer une reservation</h1>
     <div class="form-group">
@@ -14,7 +14,7 @@
       <label for="trajet">Trajet :</label>
       {% for trajet in trajets %}
       <input id="{{ trajet.id }}" name="trajet" type="radio" value="{{ trajet.id }}" {% if selected_trajet and selected_trajet.id == trajet.id %} checked{% endif %}>
-      <label for="{{ trajet.id }}">{{ trajet.point_depart }} - {{ trajet.destination }} ({{ trajet.places_disponibles }} places disponibles pour {{ trajet.date}})</label>
+      <label for="{{ trajet.id }}">{{ trajet.point_depart }} -- {{ trajet.passe_par }} -- {{ trajet.destination }} ({{ trajet.places_disponibles }} places disponibles pour {{ trajet.date }})</label>
       {% endfor %}
     </div>
     <div class="form-group">
@@ -24,6 +24,10 @@
     <div class="form-group">
       <label for="places">Point de rencontre :</label>
       <input id="point_de_rencontre" name="point_de_rencontre" type="text">
+    </div>
+    <div class="form-group">
+      <label for="image">Image :</label>
+      <input id="image" name="image" type="file" accept="image/*">
     </div>
     <button type="submit" action="% url 'reservation' %">Réserver</button>
   </form>
@@ -40,6 +44,7 @@
           <h4>date :</h4><p>{{ reservation.timestamp }}</p>
           <h4>Places :</h4><p>{{ reservation.places }}</p>
           <h4>Point de rencontre :</h4><p>{{ reservation.point_de_rencontre }}</p>
+          <h4>Image :</h4><p>{{ reservation.image}}</p>
           <h4>Statut :</h4><p>{{ reservation.statut }}</p>
       </div>
   </article>

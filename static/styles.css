@@ -61,12 +61,12 @@
     text-align: center;
     }
     
-    .hero-text h1 {
+    .hero-text h2 {
     font-size: 3rem;
     margin-bottom: 10px;
     }
     
-    .hero-text p {
+    .hero-text h4 {
     font-size: 1.5rem;
     }
     

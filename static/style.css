@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+h1 {
+    margin: 0;
+}
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+.btn {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.btn:hover {
+    background-color: #45a049;
+}
+
+.trajet-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.trajet-item {
+    flex-basis: 30%;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.trajet-info {
+    flex-grow: 1;
+}
+
+.cta-button {
+    align-self: flex-end;
+}
+/* Styles généraux */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Styles pour le formulaire */
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form input[type="text"],
+form input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+form button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Styles pour la liste des réservations */
+.reserver-list {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.trajet-item {
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.container h4 {
+  margin-top: 0;
+}
+
+.container p {
+  margin-bottom: 0;
+}
