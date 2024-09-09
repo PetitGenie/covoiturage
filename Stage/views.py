@@ -163,7 +163,7 @@ def create_trajet(request):
         form = TrajetForm(request.POST, user=request.user)
         if form.is_valid():
             trajet = form.save(commit=False)
-            trajet.user_connecte = request.user
+            trajet.user = request.user
             
             # Vérification de la date pour définir le statut
             if trajet.date < timezone.now().date():
