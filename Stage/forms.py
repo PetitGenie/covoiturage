@@ -1,5 +1,5 @@
 from django import forms
-from covoiturage.models import Trajet, User, Commentaire, Vehicule, Paiement
+from covoiturage.models import Trajet, User, Commentaire, Vehicule, Paiement, Reservation
 from django.utils import timezone
 
 class LoginForm(forms.Form):
@@ -61,13 +61,15 @@ class CommentaireForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(CommentaireForm, self).__init__(*args, **kwargs)
-        if user:
-            
-            trajets = Trajet.objects.filter(user=user)
-            print("Trajets trouvés:", trajets)  # Débogage
-            self.fields['trajet'].queryset = trajets
 
-            if not trajets.exists():
+        if user:
+            # Filter completed reservations by the user
+            reservations = Reservation.objects.filter(user=user, statut='terminé') 
+            trajets = reservations.values_list('trajet_id', flat=True)
+            # Filter trajets based on the user's completed reservations
+            self.fields['trajet'].queryset = Trajet.objects.filter(id__in=trajets)
+
+            if not self.fields['trajet'].queryset.exists():
                 self.fields['trajet'].empty_label = "Aucun trajet disponible"
 
 

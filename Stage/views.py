@@ -171,7 +171,14 @@ def create_trajet(request):
             else:
                 trajet.status = 'en cours'  
             
+            # Vérifier que les places disponibles ne dépassent pas la capacité du véhicule
+            vehicule = trajet.vehicule  
+            if trajet.places_disponibles > vehicule.places:  
+                messages.error(request, "Le nombre de places disponibles ne peut pas dépasser la capacité du véhicule.")
+                return render(request, 'ajouterTrajet.html', {'form': form})
+
             trajet.save()
+            messages.success(request, "Trajet créé avec succès.")
             return redirect('dashboard_driver')  
     else:
         form = TrajetForm(user=request.user)
