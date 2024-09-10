@@ -169,10 +169,10 @@ def create_trajet(request):
             if trajet.date < timezone.now().date():
                 trajet.status = 'terminé'
             else:
-                trajet.status = 'en cours'  # Statut par défaut
+                trajet.status = 'en cours'  
             
             trajet.save()
-            return redirect('dashboard_driver')  # Remplacez par votre page de succès
+            return redirect('dashboard_driver')  
     else:
         form = TrajetForm(user=request.user)
 
@@ -211,14 +211,14 @@ def deleteT(request, trajet_id):
 
 def commentaires(request):
     if request.method == 'POST':
-        form = CommentaireForm(request.POST, user=request.user)
+        form = CommentaireForm(request.POST, user=request.user) 
         if form.is_valid():
             commentaire = form.save(commit=False)
-            commentaire.user = request.user 
+            commentaire.user = request.user  
             commentaire.save()
-            return redirect('comments')  
+            return redirect('comments') 
     else:
-        form = CommentaireForm(user=request.user)
+        form = CommentaireForm(user=request.user)  
 
     return render(request, 'commentaire.html', {'form': form})
 

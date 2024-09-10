@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import index
 from . import views
 from .views import reservation
@@ -43,3 +45,6 @@ urlpatterns = [
     path('dashboard_driver/', views.dashboard_driver, name='dashboard_driver'),
     path('paiement/<int:trajet_id>/', views.facture, name='facture'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

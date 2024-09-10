@@ -9,7 +9,8 @@
     {% if vehicles %}
     {% for vehicle in vehicles %}
     <div class="vehicle-card">
-      <p><strong>{{ vehicle.modele }}</strong></p>
+      <p>Voiture : <strong>{{ vehicle.modele }}</strong></p>
+      <p>Places : {{ vehicle.places }}</p>
       <p>Plaque : {{ vehicle.plaque }}</p>
       <p>Couleur : {{ vehicle.color }}</p>
     </div>

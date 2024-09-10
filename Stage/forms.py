@@ -30,8 +30,8 @@ class TrajetForm(forms.ModelForm):
             'point_depart': forms.TextInput(attrs={'required': 'true'}),
             'passe_par': forms.TextInput(attrs={'required': 'false'}),
             'destination': forms.TextInput(attrs={'required': 'true'}),
-            'places_disponibles': forms.NumberInput(attrs={'min': 1, 'required': 'true'}),
             'vehicule': forms.Select(attrs={'required': 'true'}),
+            'places_disponibles': forms.NumberInput(attrs={'min': 1, 'required': 'true'}),
             'heure_depart': forms.TimeInput(attrs={'type': 'time', 'required': 'true'}),
             'date': forms.DateInput(attrs={'type': 'date', 'required': 'true'}),
         }

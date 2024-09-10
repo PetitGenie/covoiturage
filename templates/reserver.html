@@ -44,7 +44,9 @@
           <h4>date :</h4><p>{{ reservation.timestamp }}</p>
           <h4>Places :</h4><p>{{ reservation.places }}</p>
           <h4>Point de rencontre :</h4><p>{{ reservation.point_de_rencontre }}</p>
-          <h4>Image :</h4><p>{{ reservation.image}}</p>
+          {% if reservation.image %}
+          <h4>Image :<img src="{{ reservation.image.url }}" alt="Image de réservation" style="max-width: 200px; margin: 10px;">
+      {% endif %}</h4>
           <h4>Statut :</h4><p>{{ reservation.statut }}</p>
       </div>
   </article>
