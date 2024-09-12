@@ -34,10 +34,10 @@ urlpatterns = [
     path('dd/trajets/', views.create_trajet, name='trajet'),
     path('register/', views.register, name='register'),
     path('dashboard_driver/<int:trajet_id>/supprimer/', views.deleteT, name='deleteT'),
+    path('annuler-reservation/<int:reservation_id>/', views.annuler_reservation, name='annuler_reservation'),
     path('reservation/<int:trajet_id>/createReservation/reservation', views.reservation, name='reservation'),
     path('trajet/<int:trajet_id>/modifier/', views.modifierT, name='modifierT'),
     path('comments/', views.commentaires, name='commentaires'),
-   
     path('verify/', views.verify, name='verify'),
     path('vehicle/add/', views.addCar, name='addCar'),
     path('cars/vehicle/add/', views.addCar, name='addCar'),

@@ -11,6 +11,34 @@
   display: flex;
   flex-direction: column;
 }
+.messages {
+  list-style-type: none; /* Supprime les puces */
+  padding: 0; /* Supprime le padding par défaut */
+  margin: 20px 0; /* Ajoute de l'espace au-dessus et en dessous */
+}
+
+.message {
+  padding: 10px 15px; /* Ajoute de l'espace intérieur */
+  border-radius: 5px; /* Arrondit les coins */
+  margin-bottom: 10px; /* Ajoute de l'espace entre les messages */
+  color: #fff; /* Couleur du texte */
+}
+
+.message.success {
+  background-color: #4CAF50; /* Vert pour les messages de succès */
+}
+
+.message.error {
+  background-color: #f44336; /* Rouge pour les messages d'erreur */
+}
+
+.message.info {
+  background-color: #2196F3; /* Bleu pour les messages d'information */
+}
+
+.message.warning {
+  background-color: #ff9800; /* Orange pour les messages d'avertissement */
+}
 
 .form-group {
   margin-bottom: 20px;

@@ -62,76 +62,66 @@ def deconnexion(request):
          
 @login_required(login_url='/login/')
 def reservation(request):
-    if request.user.is_authenticated:
-        reservations = Reservation.objects.filter(user=request.user)
-        now = datetime.now()
-        trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
+    now = datetime.now()
+    reservations = Reservation.objects.filter(user=request.user)
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
 
-        # Mettre à jour le statut des réservations
-        for reservation in reservations:
-            if reservation.trajet.date < now.date():
-                reservation.statut = 'terminé'
-                reservation.save()
+    # Mettre à jour le statut des réservations
+    for reservation in reservations:
+        if reservation.trajet.date < now.date():
+            reservation.statut = 'terminé'
+            reservation.save()
+    Reservation.objects.filter(user=request.user, trajet__date__lt=now.date(), statut='confirmé').update(statut='terminé')
 
+    selected_trajet = None
 
-        selected_trajet = None
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        trajet_id = request.POST.get('trajet')
+        places = int(request.POST.get('places', 0))
+        point_de_rencontre = request.POST.get('point_de_rencontre')
+        image = request.FILES.get('image')  
 
+        # Vérifier si le nombre de places est positif
+        if places <= 0:
+            messages.error(request, "Le nombre de places doit être positif.")
+            return redirect('reservation')
 
-        if request.method == 'POST':
-            # Récupérer les données du formulaire
-            trajet_id = request.POST.get('trajet')
-            places = int(request.POST.get('places'))
-            timestamp = request.POST.get('timestamp')
-            point_de_rencontre = request.POST.get('point_de_rencontre')
-            image = request.POST.get('image')
+        # Récupérer le trajet sélectionné
+        trajet = get_object_or_404(Trajet, id=trajet_id)
 
-            # Récupérer le trajet sélectionné
-            trajet = Trajet.objects.get(id=trajet_id)
+        # Vérifier si le nombre de places disponibles est suffisant
+        if places > trajet.places_disponibles:
+            messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
+            return redirect('reservation')
 
-            # Vérifier si l'utilisateur a déjà une réservation pour ce trajet
-            existing_reservation = Reservation.objects.filter(user=request.user, trajet=trajet).first()
+        # Créer une nouvelle réservation
+        reservation = Reservation(
+            user=request.user,
+            trajet=trajet,
+            places=places,
+            point_de_rencontre=point_de_rencontre,
+            timestamp=now,
+            statut='confirmé',
+            image=image
+        )
+        reservation.save()
+        messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès.")
 
-            # Si l'utilisateur a déjà une réservation, augmenter le nombre de places
-            if existing_reservation:
-                existing_reservation.places += places
-                existing_reservation.save()
-            # Sinon, créer une nouvelle réservation
-            else:
-                # Vérifier si le nombre de places disponibles est suffisant
-                if places > trajet.places_disponibles:
-                    messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
-                    return redirect('reservation')
-
-                # Créer une nouvelle réservation
-                reservation = Reservation(
-                    user=request.user,
-                    trajet=trajet,
-                    places=places,
-                    point_de_rencontre=point_de_rencontre,
-                    timestamp=timestamp,
-                    statut='confirmé',
-                    image=image
-                )
-                reservation.save()
-
-            # Mettre à jour le nombre de places disponibles pour le trajet
-            trajet.places_disponibles -= places
-            trajet.save()
-
-        # Récupérer le trajet sélectionné (s'il y en a un)
-        if 'trajet' in request.GET:
-            try:
-                selected_trajet = Trajet.objects.get(id=request.GET.get('trajet'))
-            except Trajet.DoesNotExist:
-                pass
-
-    else:
-        reservations = []
-        trajets = []
-        selected_trajet = None
+        # Mettre à jour le nombre de places disponibles pour le trajet
+        trajet.places_disponibles -= places
+        trajet.save()
 
         return redirect('reservation')
 
+    else:  # GET request
+        # Récupérer le trajet sélectionné (s'il y en a un)
+        trajet_id = request.GET.get('trajet')
+        if trajet_id:
+            try:
+                selected_trajet = Trajet.objects.get(id=trajet_id)
+            except Trajet.DoesNotExist:
+                selected_trajet = None
 
     context = {
         'reservations': reservations,
@@ -139,7 +129,7 @@ def reservation(request):
         'selected_trajet': selected_trajet,
     }
     return render(request, 'reserver.html', context)
-    
+        
 @login_required
 def annuler_reservation(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)

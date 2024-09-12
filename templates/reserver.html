@@ -1,11 +1,19 @@
 {% extends 'index.html' %}
 {% load static %}
+
 {% block section %}
-<link rel="stylesheet" type="text/css" href="{% static 'reserver.css' %}" >
+<link rel="stylesheet" type="text/css" href="{% static 'reserver.css' %}">
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 <div class="reservation-form-container">
-  <form class="reservation-form" method="POST" enctype="multipart/form-data">
+  <form class="reservation-form" method="POST" enctype="multipart/form-data" action="{% url 'reservation' %}">
     {% csrf_token %}
-    <h1>Creer une reservation</h1>
+    <h1>Créer une réservation</h1>
     <div class="form-group">
       <label for="username">Utilisateur :</label>
       <input id="username" name="username" type="text" value="{{ user.username }}" readonly>
@@ -13,47 +21,71 @@
     <div class="form-group">
       <label for="trajet">Trajet :</label>
       {% for trajet in trajets %}
-      <input id="{{ trajet.id }}" name="trajet" type="radio" value="{{ trajet.id }}" {% if selected_trajet and selected_trajet.id == trajet.id %} checked{% endif %}>
+      <input id="{{ trajet.id }}" name="trajet" type="radio" value="{{ trajet.id }}" {% if selected_trajet and selected_trajet.id == trajet.id %} checked{% endif %} required>
       <label for="{{ trajet.id }}">{{ trajet.point_depart }} -- {{ trajet.passe_par }} -- {{ trajet.destination }} ({{ trajet.places_disponibles }} places disponibles pour {{ trajet.date }})</label>
       {% endfor %}
     </div>
     <div class="form-group">
       <label for="places">Places :</label>
-      <input id="places" name="places" type="number" min="1">
+      <input id="places" name="places" type="number" min="1" required>
     </div>
     <div class="form-group">
-      <label for="places">Point de rencontre :</label>
-      <input id="point_de_rencontre" name="point_de_rencontre" type="text">
+      <label for="point_de_rencontre">Point de rencontre :</label>
+      <input id="point_de_rencontre" name="point_de_rencontre" type="text" required>
     </div>
     <div class="form-group">
       <label for="image">Image :</label>
       <input id="image" name="image" type="file" accept="image/*">
     </div>
-    <button type="submit" action="% url 'reservation' %">Réserver</button>
+    <button type="submit">Réserver</button>
   </form>
 </div>
 
-
 <div class="reserver-list"> 
   {% if reservations %}
-  <h2>Mes Réservations</h2>
+  <h2>Mes Réservations ({{ reservations|length }})</h2>
   {% for reservation in reservations %}
   <article class="reservation-item"> 
       <div class="reservation-details"> 
           <h4>Trajet :</h4><p>{{ reservation.trajet.point_depart }} - {{ reservation.trajet.destination }} pour {{reservation.trajet.date}}</p>
-          <h4>date :</h4><p>{{ reservation.timestamp }}</p>
+          <h4>Date :</h4><p>{{ reservation.timestamp }}</p>
           <h4>Places :</h4><p>{{ reservation.places }}</p>
           <h4>Point de rencontre :</h4><p>{{ reservation.point_de_rencontre }}</p>
           {% if reservation.image %}
-          <h4>Image :<img src="{{ reservation.image.url }}" alt="Image de réservation" style="max-width: 200px; margin: 10px;">
-      {% endif %}</h4>
+          <h4>Image :</h4><img src="{{ reservation.image.url }}" alt="Image de réservation" style="max-width: 200px; margin: 10px;">
+          {% endif %}
           <h4>Statut :</h4><p>{{ reservation.statut }}</p>
       </div>
+      {% if reservation.statut != 'terminé' and reservation.statut != 'annulé' %}
+        <a href="{% url 'annuler_reservation' reservation.id %}" class="cancel-button">Annuler cette réservation</a>
+      {% endif %}
   </article>
   {% endfor %}
   </div>    
   {% else %}
-  <strong><p>Vous n'avez pas de réservation pour le moment ou celles déjà faites sont annulées.</p></strong>
+  <p><strong>Vous n'avez pas de réservation pour le moment (longueur: {{ reservations|length }}).</strong></p>
   {% endif %} 
   
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var trajetInputs = document.querySelectorAll('input[name="trajet"]');
+    var placesInput = document.getElementById('places');
+
+    trajetInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+            var maxPlaces = parseInt(this.parentNode.textContent.match(/(\d+) places disponibles/)[1]);
+            placesInput.max = maxPlaces;
+            placesInput.value = ''; // Reset the value when changing trajet
+        });
+    });
+
+    // Initial setup for the selected trajet (if any)
+    var selectedTrajet = document.querySelector('input[name="trajet"]:checked');
+    if (selectedTrajet) {
+        var maxPlaces = parseInt(selectedTrajet.parentNode.textContent.match(/(\d+) places disponibles/)[1]);
+        placesInput.max = maxPlaces;
+    }
+});
+</script>
+
 {% endblock section %}

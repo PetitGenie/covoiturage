@@ -11,43 +11,24 @@
     }
     
     .nav {
-        background-color: #140101;
-        color: #fff;
-        padding: 2px;
         display: flex;
-        justify-content: center;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-    }
-    
-    .nav .logo {
-        margin-right: 20px;
-        width: 90px; /* Ajustez cette valeur pour la taille souhaitée */
-        height: auto; /* Maintient le rapport d'aspect */
-        align-self: center; /* Aligne verticalement avec les liens */
-    }
-    
-    .nav .nav-links {
-        list-style-type: none;
-        display: flex;
+        justify-content: space-between;
         align-items: center;
-        padding: 0;
+        background-color: #333333;
     }
     
-    .nav .nav-links li {
-        margin-right: 20px;
+    .nav-links {
+        list-style: none;
+        display: flex;
     }
     
-    .nav .nav-links a {
+    .nav-links li {
+        margin: 0 15px;
+    }
+    
+    .nav-links a {
         color: #fff;
         text-decoration: none;
-        transition: color 0.3s ease;
-        font-size: 16px; /* Ajustez la taille de police si nécessaire */
-    }
-    
-    .nav .nav-links a:hover {
-        color: #ccc;
     }
     
     .content-wrapper {
@@ -67,7 +48,7 @@
     
     h2 {
     font-size: 3rem;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-align: center;
     }    
     .about, .features, .connect, .contact {
