@@ -9,10 +9,13 @@
 <body>
     <div class="wrapper">
         <header>
+            <div class="nav">
             <nav class="nav">
-                <div class="logo">
-                    <img src="{% static 'logo1.1.jpeg' %}" alt="Covoiturage">
-                </div>
+                
+                    <div class="logo-container">
+                    <img src="{% static 'monlogo.jpg' %}" class="logo" alt="Logo">
+                    </div>
+                
                 <ul class="nav-links">
                     <li><a href="/">À propos</a></li>
                     <li><a href='/trajet'>Trajets</a></li>
@@ -31,14 +34,11 @@
                     
                 </ul>
             </nav>
+            </div>
         </header>
        <div class="content-wrapper">
             {% block section %}
             <main>
-                
-                    
-                        <h4>JANA NANJE: La solution idéale pour vos trajets quotidiens</h4>
-                   
                     <h2>À propos de JANA NANJE</h2>
                     <p></strong>JANA NANJE</strong> est une application conviviale qui vous permet de partager vos trajets avec d'autres utilisateurs, ce qui vous permet de réduire les coûts, de gagner du temps et de contribuer à la réduction des files d'attente des moyens de transport qui deviennent difficiles.</p>
                 

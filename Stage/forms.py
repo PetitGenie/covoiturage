@@ -7,12 +7,22 @@ class LoginForm(forms.Form):
     password= forms.CharField()
 
 
-class ReserverForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=User.objects.all())
+class ReserverForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.HiddenInput(), required=False)
     trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
     places = forms.DecimalField()
-    point_de_rencontre = forms.DecimalField()
+    point_de_rencontre = forms.CharField()
     image = forms.ImageField()
+    class Meta:
+        model = Reservation 
+        fields = ['trajet', 'places', 'point_de_rencontre', 'image'] 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['user'].initial = user 
+            self.instance.user = user  
+            self.fields['user'].widget.attrs['readonly'] = 'readonly'
 
 class TrajetForm(forms.ModelForm):
     class Meta:

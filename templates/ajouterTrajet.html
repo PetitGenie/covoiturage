@@ -3,7 +3,13 @@
 {% block section %}
 
   <link rel="stylesheet" href="{% static 'ajouterT.css' %}">
-
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+          <li class="message {{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+  </ul>
+  {% endif %}
     <h1>Créer un nouveau trajet</h1>
     <form method="POST">
         {% csrf_token %}

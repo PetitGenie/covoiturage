@@ -21,20 +21,15 @@ class Trajet(models.Model):
     date = models.DateField(editable=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     vehicule = models.ForeignKey(Vehicule, on_delete=models.CASCADE, null=True)
-    status = models.CharField(max_length=20, default='En cours', choices=[('En cours', 'En cours'), ('Terminee', 'Terminé')])
+    status = models.CharField(max_length=20, default='En cours', choices=[('En cours', 'En cours'), ('Terminé', 'Terminé'),('Annulé','Annulé')])
 
     def __str__(self) -> str:
         return f"{self.point_depart} - {self.destination}"
     
     def update_status(self):
-        now = timezone.now()
-        if self.date < now.date():
-            self.status = 'completed'
-        elif self.date == now.date() and self.heure_depart < now.time():
-            self.status = 'completed'
-        else:
-            self.status = 'ongoing'
-        self.save()
+        if self.date < timezone.now().date():
+            self.statut = 'terminé'
+            self.save() 
     
 class Categorie(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -45,13 +40,14 @@ class Reservation(models.Model):
         ('Termine', 'Termine'),
         ('Confirme', 'Confirme'),
         ('Annule', 'Annule'),
+        ('En attente', 'En attente'),
     )    
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     point_de_rencontre = models.CharField(max_length=255, null=True)
     places = models.PositiveBigIntegerField(null=True)
-    statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='Confirme')
+    statut = models.CharField(max_length=10, choices=STATUT_CHOICES)
     image = models.ImageField(upload_to='reservations/', null=True, blank=True)
 
     def annuler_reservation(self):

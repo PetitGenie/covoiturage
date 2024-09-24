@@ -1,42 +1,50 @@
+
 :root {
     --primary-color: #11f8ce;
     --secondary-color: #2980B9;
     --text-color: #333333;
-    --background-color: #F2F2F2
-    }
-    
-    .wrapper {
+    --background-color: #F2F2F2;
+}
+
+.wrapper {
     display: flex;
     flex-direction: column;
-    }
-    
-    .nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #333333;
-    }
-    
-    .nav-links {
-        list-style: none;
-        display: flex;
-    }
-    
-    .nav-links li {
-        margin: 0 15px;
-    }
-    
-    .nav-links a {
-        color: #fff;
-        text-decoration: none;
-    }
-    
-    .content-wrapper {
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    background-color: #333333;
+    padding: 10px 20px; /* Espacement autour des éléments */
+}
+
+.logo {
+    max-width: 100px;
+    height: auto; /* Ajuste la hauteur automatiquement */
+    margin-bottom: 0; /* Pas de marge en bas */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin-left: auto; /* Pousse les liens vers la droite */
+}
+
+.nav-links li {
+    margin: 0 15px; /* Espacement entre les liens */
+}
+
+.nav-links a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.content-wrapper {
     flex-grow: 1;
     padding: 20px;
-    }
-    
-    .hero {
+}
+
+.hero {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,39 +52,40 @@
     color: #0b0202;
     background-color: var(--primary-color);
     text-align: center;
-    }
-    
-    h2 {
+}
+
+h2 {
     font-size: 3rem;
     margin-bottom: 5px;
     text-align: center;
-    }    
-    .about, .features, .connect, .contact {
+}    
+
+.about, .features, .connect, .contact {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 40px;
     margin: 20px;
     border-radius: 5px;
-    }
-    
-    .feature-container {
+}
+
+.feature-container {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    }
-    
-    .feature {
+}
+
+.feature {
     flex-basis: 30%;
     text-align: center;
     margin-bottom: 40px;
-    }
-    
-    .feature img {
+}
+
+.feature img {
     max-width: 400px;
     height: 100px; /* Hauteur fixe pour les images */
     margin-bottom: 10px;
-    }
-    
-    .cta-button, .contact-button {
+}
+
+.cta-button, .contact-button {
     display: inline-block;
     color: #fff;
     background: var(--secondary-color);
@@ -84,14 +93,14 @@
     padding: 10px 20px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
-    }
-    
-    .cta-button:hover, .contact-button:hover {
+}
+
+.cta-button:hover, .contact-button:hover {
     background-color: #555;
-    }
-    
-    /* Styles du pied de page */
-    footer {
+}
+
+/* Styles du pied de page */
+footer {
     background-color: #333;
     color: #fff;
     text-align: center;
@@ -99,29 +108,29 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-    }
-    
-    /* Styles responsives */
-    @media (max-width: 768px) {
+}
+
+/* Styles responsives */
+@media (max-width: 768px) {
     .feature {
-    flex-basis: 45%;
+        flex-basis: 45%;
     }
-    }
-    
-    @media (max-width: 480px) {
+}
+
+@media (max-width: 480px) {
     .feature {
-    flex-basis: 100%;
+        flex-basis: 100%;
     }
     .nav {
-    flex-direction: column;
-    align-items: center;
+        flex-direction: column;
+        align-items: center;
     }
     .nav .logo {
-    margin-right: 0;
-    margin-bottom: 10px;
+        margin-right: 0;
+        margin-bottom: 10px;
     }
     .nav .nav-links li {
-    margin-right: 10px;
-    margin-bottom: 10px;
+        margin-right: 10px;
+        margin-bottom: 10px;
     }
-    }
+}

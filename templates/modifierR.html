@@ -1,0 +1,11 @@
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'ajouterT.css' %}">
+
+<form method="post" enctype="multipart/form-data">
+    <h1>Modifier la réservation</h1>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Modifier</button>
+</form>

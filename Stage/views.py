@@ -95,6 +95,13 @@ def reservation(request):
             messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
             return redirect('reservation')
 
+        # Déterminer le statut en fonction de l'image
+        if image:
+            statut='Confirmée'
+        else:
+            statut='En attente'
+            messages.success(request, f"Votre réservation de {places} place(s) a été effectuée mais reste en attente")
+
         # Créer une nouvelle réservation
         reservation = Reservation(
             user=request.user,
@@ -102,8 +109,8 @@ def reservation(request):
             places=places,
             point_de_rencontre=point_de_rencontre,
             timestamp=now,
-            statut='confirmé',
-            image=image
+            image=image,
+            statut= statut
         )
         reservation.save()
         messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès.")
@@ -130,13 +137,23 @@ def reservation(request):
     }
     return render(request, 'reserver.html', context)
         
-@login_required
+def modifierR(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+
+    if request.method == 'POST':
+        form = ReserverForm(request.POST, request.FILES, instance=reservation, user=request.user)
+        if form.is_valid():
+            form.save() 
+            messages.success(request, "Votre réservation a été modifiée avec succès.")
+            return redirect('dashboard_driver')  
+    else:
+        form = ReserverForm(instance=reservation, user=request.user)
+
+    return render(request, 'modifierR.html', {'form': form, 'reservation': reservation})
+
+
 def annuler_reservation(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
-    
-    if reservation.statut == 'terminé':
-        messages.error(request, "Vous ne pouvez pas annuler une réservation terminée.")
-        return redirect('reservation')
     
     trajet = reservation.trajet
     trajet.places_disponibles += reservation.places
@@ -179,8 +196,13 @@ def create_trajet(request):
 def trajets(request):
     now = timezone.now()
     trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
-    for trajet in trajets:
-        trajet.update_status()
+
+    all_trajets = Trajet.objects.all()
+    for trajet in all_trajets:
+        trajet.update_status()  
+
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
+
     context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
@@ -204,7 +226,20 @@ def deleteT(request, trajet_id):
     Reservation.objects.filter(trajet=trajet).update(statut='annulé')
     return redirect('dashboard_driver')
 
+def annulerT(request, trajet_id):
+    trajet = get_object_or_404(Trajet, id=trajet_id)
 
+    # Annuler toutes les réservations confirmées pour ce trajet
+    updated_count = Reservation.objects.filter(trajet=trajet, statut='Confirme').update(statut='Annulé')
+
+    # Mettre à jour le statut du trajet
+    trajet.statut = 'Annulé'
+    trajet.save()
+
+    # Message de confirmation
+    messages.success(request, f"{updated_count} réservation(s) annulée(s).")
+
+    return redirect('dashboard_driver')
 
 def commentaires(request):
     if request.method == 'POST':
