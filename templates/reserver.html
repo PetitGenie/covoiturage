@@ -33,10 +33,7 @@
       <label for="point_de_rencontre">Point de rencontre :</label>
       <input id="point_de_rencontre" name="point_de_rencontre" type="text" required>
     </div>
-    <div class="form-group">
-      <label for="image">Image :</label>
-      <input id="image" name="image" type="file" accept="image/*">
-    </div>
+
     <button type="submit">Réserver</button>
   </form>
 </div>
@@ -61,6 +58,9 @@
       {% endif %}
       {% if reservation.statut != 'terminé' and reservation.statut != 'annulé' %}
       <a href="{% url 'modifierR' reservation.id %}" class="update-button">Modifier</a>
+    {% endif %}
+    {% if reservation.statut != 'terminé' and reservation.statut != 'annulé' %}
+    <a href="{% url 'paiement' reservation.id %}">Payer pour cette réservation</a>
     {% endif %}
   </article>
   {% endfor %}

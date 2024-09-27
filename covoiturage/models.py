@@ -47,8 +47,10 @@ class Reservation(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     point_de_rencontre = models.CharField(max_length=255, null=True)
     places = models.PositiveBigIntegerField(null=True)
+    confirmation_code = models.CharField(max_length=100, unique=True, null =True)
+    avance = models.ImageField(upload_to='confirmation_photos/', null=True, blank=True)
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES)
-    image = models.ImageField(upload_to='reservations/', null=True, blank=True)
+    
 
     def annuler_reservation(self):
         if self.statut == 'confirme':
@@ -96,7 +98,8 @@ class Notification(models.Model):
 class Paiement(models.Model):
     trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    montant = models.PositiveBigIntegerField()
+    image = models.ImageField(upload_to='paiement/', null=True, blank=True)
+    code_confirmation = models.CharField(max_length=100, unique=True, null = True)
     date = models.DateTimeField()
 
     def __str__(self):

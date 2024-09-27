@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from .views import index
 from . import views
 from .views import reservation
-from .views import Trajet,deleteT, annulerT,modifierT, dashboard_driver, addCar, commentaires
+from .views import Trajet,deleteT, annulerT,modifierT, dashboard_driver, addCar, commentaires, paiement
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +31,7 @@ urlpatterns = [
     path('logout/', views.deconnexion, name='logout'),
     path('reservation/', views.reservation, name='reservation'),
     path('trajet/', views.trajets, name='trajet'),
+    path('login/trajet/', views.trajets, name='trajet'),
     path('dd/trajets/', views.create_trajet, name='trajet'),
     path('register/', views.register, name='register'),
     path('dashboard_driver/<int:trajet_id>/annuler/', views.annulerT, name='annulerT'),
@@ -45,7 +46,7 @@ urlpatterns = [
     path('cars/vehicle/add/', views.addCar, name='addCar'),
     path('cars/', views.cars, name='cars'),
     path('dashboard_driver/', views.dashboard_driver, name='dashboard_driver'),
-    path('paiement/<int:trajet_id>/', views.facture, name='facture'),
+    path('paiement/<int:reservation_id>', views.paiement, name='paiement'),
 ]
 
 if settings.DEBUG:

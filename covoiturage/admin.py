@@ -31,15 +31,17 @@ class TrajetAdmin(admin.ModelAdmin):
 admin.site.register(Trajet, TrajetAdmin)
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'trajet','places','timestamp', 'point_de_rencontre','image')
+    list_display = ('user', 'trajet','places','timestamp', 'point_de_rencontre')
     search_fields = ('timestamp','places','point_de_rencontre')
 
 admin.site.register(Reservation, ReservationAdmin)
 class VehiculeAdmin(admin.ModelAdmin):
     list_display=('modele','places','plaque','color')
-admin.site.register(Vehicule)
+admin.site.register(Vehicule, VehiculeAdmin)
 class CommentaireAdmin(admin.ModelAdmin):
       list_display=('user', 'trajet','contenu','note')
 admin.site.register(Commentaire, CommentaireAdmin)      
 admin.site.register(Notification)
-admin.site.register(Paiement)
+class PaiementAdmin (admin.ModelAdmin):
+    list_display = ('image','code_confirmation', 'date')
+admin.site.register(Paiement, PaiementAdmin)    

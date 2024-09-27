@@ -9,6 +9,8 @@ from datetime import datetime
 from django.utils import timezone
 from django.contrib import messages
 from datetime import datetime, timedelta
+import random
+import string
 
 def index(request):
    
@@ -48,7 +50,7 @@ def logins(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request,user)
-                return redirect("/")
+                return redirect('trajet/')
             else:
                 erreur = "We didn't recognize you"
         else:
@@ -64,53 +66,38 @@ def deconnexion(request):
 def reservation(request):
     now = datetime.now()
     reservations = Reservation.objects.filter(user=request.user)
-    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
-
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0).exclude(user=request.user)
     # Mettre à jour le statut des réservations
-    for reservation in reservations:
-        if reservation.trajet.date < now.date():
-            reservation.statut = 'terminé'
-            reservation.save()
+    if reservations:
+        for reservation in reservations:
+            if (reservation.trajet.date < now.date()) or (reservation.trajet.date == now.date() and reservation.trajet.heure_depart < now.time()):
+               reservation.statut = 'terminé'
+               reservation.save()
     Reservation.objects.filter(user=request.user, trajet__date__lt=now.date(), statut='confirmé').update(statut='terminé')
-
+    Reservation.objects.filter(user=request.user,trajet__date=now.date(),trajet__heure_depart__lt=now.time(),statut='confirmé').update(statut='terminé')
     selected_trajet = None
 
     if request.method == 'POST':
-        # Récupérer les données du formulaire
-        trajet_id = request.POST.get('trajet')
+        # Récupérer les données du formulaire (par exemple, places, point_de_rencontre)
         places = int(request.POST.get('places', 0))
         point_de_rencontre = request.POST.get('point_de_rencontre')
-        image = request.FILES.get('image')  
+        trajet = Trajet.objects.get(id=request.POST.get('trajet'))
+        now = timezone.now()
 
-        # Vérifier si le nombre de places est positif
-        if places <= 0:
-            messages.error(request, "Le nombre de places doit être positif.")
-            return redirect('reservation')
-
-        # Récupérer le trajet sélectionné
-        trajet = get_object_or_404(Trajet, id=trajet_id)
-
-        # Vérifier si le nombre de places disponibles est suffisant
+        # Vérifier si le nombre de places demandées est disponible
         if places > trajet.places_disponibles:
-            messages.error(request, f"Désolé, il ne reste que {trajet.places_disponibles} places disponibles pour ce trajet.")
-            return redirect('reservation')
+            messages.error(request, "Le nombre de places demandées dépasse les places disponibles.")
+            return redirect('reserver')  # Redirigez vers le formulaire
 
-        # Déterminer le statut en fonction de l'image
-        if image:
-            statut='Confirmée'
-        else:
-            statut='En attente'
-            messages.success(request, f"Votre réservation de {places} place(s) a été effectuée mais reste en attente")
-
-        # Créer une nouvelle réservation
+        confirmation_code = generate_confirmation_code()
         reservation = Reservation(
             user=request.user,
             trajet=trajet,
             places=places,
             point_de_rencontre=point_de_rencontre,
             timestamp=now,
-            image=image,
-            statut= statut
+            statut='en attente',
+            confirmation_code=confirmation_code
         )
         reservation.save()
         messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès.")
@@ -122,7 +109,6 @@ def reservation(request):
         return redirect('reservation')
 
     else:  # GET request
-        # Récupérer le trajet sélectionné (s'il y en a un)
         trajet_id = request.GET.get('trajet')
         if trajet_id:
             try:
@@ -143,9 +129,20 @@ def modifierR(request, reservation_id):
     if request.method == 'POST':
         form = ReserverForm(request.POST, request.FILES, instance=reservation, user=request.user)
         if form.is_valid():
-            form.save() 
+            # Récupérer le nombre de places réservées avant la modification
+            places_reservees_avant = reservation.places  
+            # Enregistrer la nouvelle réservation
+            reservation = form.save(commit=False)
+            # Récupérer le nombre de places réservées après la modification
+            places_reservees_apres = reservation.places  
+            
+            # Mettre à jour les places disponibles
+            places_diff = places_reservees_apres - places_reservees_avant
+            reservation.trajet.places_disponibles -= places_diff  
+            reservation.trajet.save()  
+            reservation.save() 
             messages.success(request, "Votre réservation a été modifiée avec succès.")
-            return redirect('dashboard_driver')  
+            return redirect('reservation')  
     else:
         form = ReserverForm(instance=reservation, user=request.user)
 
@@ -186,6 +183,7 @@ def create_trajet(request):
 
             trajet.save()
             messages.success(request, "Trajet créé avec succès.")
+
             return redirect('dashboard_driver')  
     else:
         form = TrajetForm(user=request.user)
@@ -195,14 +193,13 @@ def create_trajet(request):
 @login_required(login_url='/login/')
 def trajets(request):
     now = timezone.now()
-    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
-
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0).exclude(user=request.user)
     all_trajets = Trajet.objects.all()
     for trajet in all_trajets:
         trajet.update_status()  
 
-    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
-
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0).exclude(user=request.user)
+    
     context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
@@ -269,8 +266,7 @@ def verify(request):
 
     # Vérifier si l'utilisateur a au moins une voiture enregistrée
     if Vehicule.objects.filter(user=user).exists():
-        # Si l'utilisateur a une voiture, le rediriger vers la page des trajets
-        return redirect('dashboard_driver')
+        return redirect('cars')
     else:
         # Si l'utilisateur n'a pas de voiture, le rediriger vers la page d'ajout de voiture
         return redirect('addCar')
@@ -311,16 +307,31 @@ def cars(request):
     vehicles = Vehicule.objects.filter(user=request.user)
     return render(request, 'cars.html', {'vehicles': vehicles})
 
-def facture(request, trajet_id):
-    trajet = Trajet.objects.get(id=trajet_id)
+def paiement(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+
     if request.method == 'POST':
-        form = PaiementForm(request.POST)
+        form = PaiementForm(request.POST, request.FILES, instance=reservation)
         if form.is_valid():
-            paiement = form.save(commit=False)
-            paiement.trajet = trajet
-            paiement.user = request.user
-            paiement.save()
-            return redirect('index')
+            code_confirmation = form.cleaned_data['code_confirmation']
+            if code_confirmation == reservation.confirmation_code:
+                reservation = form.save(commit=False)
+                reservation.statut = 'confirmé'
+                reservation.save()
+                messages.success(request, "Votre paiement a été confirmé avec succès.")
+                return redirect('reservation')
+            else:
+                messages.error(request, "Le code de confirmation est incorrect.")
     else:
-        form = PaiementForm()
-    return render(request, 'facture.html', {'form': form, 'trajet': trajet})
+        form = PaiementForm(instance=reservation)
+
+    context = {
+        'form': form,
+        'reservation': reservation  
+    }
+    return render(request, 'paiement.html', context)
+
+def generate_confirmation_code(length=8):
+   
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))

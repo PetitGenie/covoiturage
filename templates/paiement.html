@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block section %}
+<link rel="stylesheet" type="text/css" href="{% static 'payer.css' %}" >
+
+<h1>Paiement pour votre réservation (ID: {{ reservation.id }})</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Confirmer le paiement</button>
+</form>
+<a href="{% url 'reservation' %}" class="btn">Retourner aux réservations</a>
+{% endblock %}

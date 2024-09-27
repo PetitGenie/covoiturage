@@ -12,10 +12,9 @@ class ReserverForm(forms.ModelForm):
     trajet = forms.ModelChoiceField(queryset=Trajet.objects.all())
     places = forms.DecimalField()
     point_de_rencontre = forms.CharField()
-    image = forms.ImageField()
     class Meta:
         model = Reservation 
-        fields = ['trajet', 'places', 'point_de_rencontre', 'image'] 
+        fields = ['trajet', 'places', 'point_de_rencontre'] 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
@@ -29,17 +28,17 @@ class TrajetForm(forms.ModelForm):
         model = Trajet
         fields = [
             'point_depart',
-            'passe_par',
             'destination',
-            'places_disponibles',
+            'passe_par',
             'vehicule',
+            'places_disponibles',
             'heure_depart',
             'date',
         ]
         widgets = {
             'point_depart': forms.TextInput(attrs={'required': 'true'}),
-            'passe_par': forms.TextInput(attrs={'required': 'false'}),
             'destination': forms.TextInput(attrs={'required': 'true'}),
+            'passe_par': forms.TextInput(attrs={'required': 'false'}),
             'vehicule': forms.Select(attrs={'required': 'true'}),
             'places_disponibles': forms.NumberInput(attrs={'min': 1, 'required': 'true'}),
             'heure_depart': forms.TimeInput(attrs={'type': 'time', 'required': 'true'}),
@@ -61,11 +60,12 @@ class RegisterForm(forms.Form):
 class CommentaireForm(forms.ModelForm):
     class Meta:
         model = Commentaire
-        fields = ['contenu', 'note', 'trajet']
+        fields = ['trajet', 'note', 'contenu']
         widgets = {
+            'trajet': forms.Select(attrs={'required': 'true'}),
             'contenu': forms.Textarea(attrs={'required': 'true', 'placeholder': 'Votre commentaire...'}),
             'note': forms.NumberInput(attrs={'min': 1, 'max': 10, 'required': 'true'}),
-            'trajet': forms.Select(attrs={'required': 'true'}),
+            
         }
 
     def __init__(self, *args, **kwargs):
@@ -114,4 +114,6 @@ class CarForm(forms.ModelForm):
 class PaiementForm(forms.ModelForm):
     class Meta:
         model = Paiement
-        fields = ['montant', 'date']
+        fields = ['image','code_confirmation', 'date']
+
+    
