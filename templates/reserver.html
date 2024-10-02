@@ -59,7 +59,7 @@
       {% if reservation.statut != 'terminé' and reservation.statut != 'annulé' %}
       <a href="{% url 'modifierR' reservation.id %}" class="update-button">Modifier</a>
     {% endif %}
-    {% if reservation.statut != 'terminé' and reservation.statut != 'annulé' %}
+    {% if reservation.statut != 'terminé' and reservation.statut != 'confirmé' and reservation.statut != 'annulé' %}
     <a href="{% url 'paiement' reservation.id %}">Payer pour cette réservation</a>
     {% endif %}
   </article>

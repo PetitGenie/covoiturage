@@ -21,7 +21,7 @@ class Trajet(models.Model):
     date = models.DateField(editable=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     vehicule = models.ForeignKey(Vehicule, on_delete=models.CASCADE, null=True)
-    status = models.CharField(max_length=20, default='En cours', choices=[('En cours', 'En cours'), ('Terminé', 'Terminé'),('Annulé','Annulé')])
+    status = models.CharField(max_length=20, choices=[('En cours', 'En cours'), ('Terminé', 'Terminé'),('Annulé','Annulé')])
 
     def __str__(self) -> str:
         return f"{self.point_depart} - {self.destination}"

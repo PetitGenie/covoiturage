@@ -64,32 +64,27 @@ def deconnexion(request):
          
 @login_required(login_url='/login/')
 def reservation(request):
-    now = datetime.now()
+    now = timezone.now()
     reservations = Reservation.objects.filter(user=request.user)
     trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0).exclude(user=request.user)
-    # Mettre à jour le statut des réservations
-    if reservations:
-        for reservation in reservations:
-            if (reservation.trajet.date < now.date()) or (reservation.trajet.date == now.date() and reservation.trajet.heure_depart < now.time()):
-               reservation.statut = 'terminé'
-               reservation.save()
-    Reservation.objects.filter(user=request.user, trajet__date__lt=now.date(), statut='confirmé').update(statut='terminé')
-    Reservation.objects.filter(user=request.user,trajet__date=now.date(),trajet__heure_depart__lt=now.time(),statut='confirmé').update(statut='terminé')
+    trajets = trajets.exclude(date=now.date(),heure_depart__lt=now.time())
     selected_trajet = None
+    # Mettre à jour le statut des réservations
+    for reservation in reservations:
+        if (reservation.trajet.date < now.date()) or (reservation.trajet.date == now.date() and reservation.trajet.heure_depart < now.time()):
+            reservation.statut = 'terminé'
+            reservation.save()
 
     if request.method == 'POST':
-        # Récupérer les données du formulaire (par exemple, places, point_de_rencontre)
         places = int(request.POST.get('places', 0))
         point_de_rencontre = request.POST.get('point_de_rencontre')
         trajet = Trajet.objects.get(id=request.POST.get('trajet'))
-        now = timezone.now()
 
-        # Vérifier si le nombre de places demandées est disponible
         if places > trajet.places_disponibles:
             messages.error(request, "Le nombre de places demandées dépasse les places disponibles.")
-            return redirect('reserver')  # Redirigez vers le formulaire
+            return redirect('reserver')
 
-        confirmation_code = generate_confirmation_code()
+        confirmation_code = generate_confirmation_code() 
         reservation = Reservation(
             user=request.user,
             trajet=trajet,
@@ -97,18 +92,19 @@ def reservation(request):
             point_de_rencontre=point_de_rencontre,
             timestamp=now,
             statut='en attente',
-            confirmation_code=confirmation_code
+            confirmation_code=confirmation_code,
         )
         reservation.save()
-        messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès.")
 
-        # Mettre à jour le nombre de places disponibles pour le trajet
+        # Mettre à jour les places disponibles
         trajet.places_disponibles -= places
         trajet.save()
 
+        messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès. Code de confirmation : {confirmation_code}")
+        
         return redirect('reservation')
 
-    else:  # GET request
+    else: 
         trajet_id = request.GET.get('trajet')
         if trajet_id:
             try:
@@ -193,13 +189,13 @@ def create_trajet(request):
 @login_required(login_url='/login/')
 def trajets(request):
     now = timezone.now()
-    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0).exclude(user=request.user)
-    all_trajets = Trajet.objects.all()
-    for trajet in all_trajets:
-        trajet.update_status()  
 
-    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0).exclude(user=request.user)
-    
+    trajets = Trajet.objects.filter( date__gt=now.date()).exclude(user=request.user) 
+    trajets = trajets.exclude(date=now.date(), heure_depart__lt=now.time())
+
+    # Exclure les trajets dont la date est aujourd'hui et dont l'heure de départ est déjà passée
+    trajets = trajets.exclude(date=now.date(),heure_depart__lt=now.time())
+
     context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
@@ -223,20 +219,8 @@ def deleteT(request, trajet_id):
     Reservation.objects.filter(trajet=trajet).update(statut='annulé')
     return redirect('dashboard_driver')
 
-def annulerT(request, trajet_id):
-    trajet = get_object_or_404(Trajet, id=trajet_id)
 
-    # Annuler toutes les réservations confirmées pour ce trajet
-    updated_count = Reservation.objects.filter(trajet=trajet, statut='Confirme').update(statut='Annulé')
 
-    # Mettre à jour le statut du trajet
-    trajet.statut = 'Annulé'
-    trajet.save()
-
-    # Message de confirmation
-    messages.success(request, f"{updated_count} réservation(s) annulée(s).")
-
-    return redirect('dashboard_driver')
 
 def commentaires(request):
     if request.method == 'POST':
@@ -251,13 +235,32 @@ def commentaires(request):
 
     return render(request, 'commentaire.html', {'form': form})
 
-   
+def annulerT(request):
+        if request.method == 'POST' and 'annuler' in request.POST:
+           trajet_id = request.POST.get('trajet_id')
+        try:
+            trajet = Trajet.objects.get(id=trajet_id, user=request.user)
+            trajet.status = 'annulé'
+            trajet.save()
+            messages.success(request, f"{updated_count} réservation(s) annulée(s).")
+        except Trajet.DoesNotExist:
+            # Gérer le cas où le trajet n'existe pas
+            pass
+
+        context = {'trajets': trajets}
+        return render(request, 'dashboard_driver.html', context)
 
 def dashboard_driver(request):
     trajets = Trajet.objects.filter(user=request.user)
-    
-    context = {'trajets': trajets}
+    now = timezone.now()
 
+    for trajet in trajets:
+        heure_depart = timezone.make_aware(datetime.combine(now.date(), trajet.heure_depart))
+        if heure_depart < now:
+            trajet.status = 'terminé'
+            trajet.save()
+
+    context = {'trajets': trajets}
     return render(request, 'dashboard_driver.html', context)
 
 
@@ -312,16 +315,17 @@ def paiement(request, reservation_id):
 
     if request.method == 'POST':
         form = PaiementForm(request.POST, request.FILES, instance=reservation)
+        
         if form.is_valid():
-            code_confirmation = form.cleaned_data['code_confirmation']
-            if code_confirmation == reservation.confirmation_code:
-                reservation = form.save(commit=False)
-                reservation.statut = 'confirmé'
-                reservation.save()
-                messages.success(request, "Votre paiement a été confirmé avec succès.")
-                return redirect('reservation')
-            else:
-                messages.error(request, "Le code de confirmation est incorrect.")
+            paiement_instance = form.save(commit=False)
+            paiement_instance.user = request.user
+            paiement_instance.code_confirmation = reservation.confirmation_code  # Utiliser le code de la réservation
+            paiement_instance.statut = 'confirmé'
+            paiement_instance.save()
+
+            messages.success(request, f"Votre paiement a été confirmé avec succès. Code de confirmation : {paiement_instance.code_confirmation}")
+            return redirect('reservation')
+
     else:
         form = PaiementForm(instance=reservation)
 
