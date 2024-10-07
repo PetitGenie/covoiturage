@@ -1,14 +1,59 @@
-{% extends 'index.html' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
 
-{% block content %}
-  <h1>Notifications</h1>
-  {% if notifications %}
-    <ul>
-      {% for notification in notifications %}
-        <li>{{ notification.timestamp }} - {{ notification.description }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Aucune notification.</p>
-  {% endif %}
-{% endblock %}
+<h1>Réservations des Clients</h1>
+
+{% if reservations %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nom du Passager</th>
+                <th>Trajet</th>
+                <th>Date et Heure de la reservation</th>
+                <th>Nombre de Places</th>
+                <th>Point de Rencontre</th>
+                <th>Paiement</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.user }}</td>
+                    <td>{{ reservation.trajet }}</td> 
+                    <td>{{ reservation.timestamp }}</td>
+                    <td>{{ reservation.places }}</td>
+                    <td>{{ reservation.point_de_rencontre }}</td>
+                    <td>{{ reservation.avance }}</td>
+                    <td>{{ reservation.statut }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Aucune réservation disponible.</p>
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div>{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+</body>
+<a href="{% url 'dashboard_driver' %}" class="btn">Retourner a la page d'accueil</a>
+</html>

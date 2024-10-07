@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from .views import index, login, register
 from . import views
 from .views import reservation
-from .views import Trajet,deleteT, annulerT,modifierT, dashboard_driver, addCar, commentaires, paiement
+from .views import Trajet,deleteT, annulerT,modifierT, dashboard_driver, addCar, commentaires, paiement, notif, my_payment
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,5 +47,7 @@ urlpatterns = [
     path('cars/', views.cars, name='cars'),
     path('dashboard_driver/', views.dashboard_driver, name='dashboard_driver'),
     path('paiement/<int:reservation_id>', views.paiement, name='paiement'),
-]
+    path('notif/', views.notif, name='notif'),
+    path('payer/', views.my_payment, name='my_payment'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

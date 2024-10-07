@@ -48,8 +48,9 @@
           <h4>Date :</h4><p>{{ reservation.timestamp }}</p>
           <h4>Places :</h4><p>{{ reservation.places }}</p>
           <h4>Point de rencontre :</h4><p>{{ reservation.point_de_rencontre }}</p>
-          {% if reservation.image %}
-          <h4>Image :</h4><img src="{{ reservation.image.url }}" alt="Image de réservation" style="max-width: 200px; margin: 10px;">
+          {% if reservation.avance %}
+            <h4>Avance :</h4>
+            <img src="{{ reservation.avance.url }}" alt="Image de paiement" style="max-width: 50%; height: auto;">
           {% endif %}
           <h4>Statut :</h4><p>{{ reservation.statut }}</p>
       </div>
@@ -68,27 +69,5 @@
   {% else %}
   <p><strong>Vous n'avez pas de réservation pour le moment (longueur: {{ reservations|length }}).</strong></p>
   {% endif %} 
-  
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var trajetInputs = document.querySelectorAll('input[name="trajet"]');
-    var placesInput = document.getElementById('places');
-
-    trajetInputs.forEach(function(input) {
-        input.addEventListener('change', function() {
-            var maxPlaces = parseInt(this.parentNode.textContent.match(/(\d+) places disponibles/)[1]);
-            placesInput.max = maxPlaces;
-            placesInput.value = ''; // Reset the value when changing trajet
-        });
-    });
-
-    // Initial setup for the selected trajet (if any)
-    var selectedTrajet = document.querySelector('input[name="trajet"]:checked');
-    if (selectedTrajet) {
-        var maxPlaces = parseInt(selectedTrajet.parentNode.textContent.match(/(\d+) places disponibles/)[1]);
-        placesInput.max = maxPlaces;
-    }
-});
-</script>
 
 {% endblock section %}

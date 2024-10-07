@@ -34,6 +34,7 @@ class TrajetForm(forms.ModelForm):
             'places_disponibles',
             'heure_depart',
             'date',
+            'telephone',
         ]
         widgets = {
             'point_depart': forms.TextInput(attrs={'required': 'true'}),
@@ -43,6 +44,7 @@ class TrajetForm(forms.ModelForm):
             'places_disponibles': forms.NumberInput(attrs={'min': 1, 'required': 'true'}),
             'heure_depart': forms.TimeInput(attrs={'type': 'time', 'required': 'true'}),
             'date': forms.DateInput(attrs={'type': 'date', 'required': 'true'}),
+            'telephone': forms.NumberInput(attrs={'required': 'true'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -108,12 +110,14 @@ class CarForm(forms.ModelForm):
 
 
 
-
-
-
 class PaiementForm(forms.ModelForm):
     class Meta:
         model = Paiement
-        fields = ['image','code_confirmation', 'date']
-
-    
+        fields = ['user','trajet','paiement','code_confirmation']
+ 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.user = self.cleaned_data['user']
+        if commit:
+            instance.save()
+        return instance

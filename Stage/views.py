@@ -100,7 +100,7 @@ def reservation(request):
         trajet.places_disponibles -= places
         trajet.save()
 
-        messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès. Code de confirmation : {confirmation_code}")
+        messages.success(request, f"Votre réservation de {places} place(s) a été effectuée avec succès. Copiez ce code de confirmation : {confirmation_code}")
         
         return redirect('reservation')
 
@@ -171,7 +171,7 @@ def create_trajet(request):
             else:
                 trajet.status = 'en cours'  
             
-            # Vérifier que les places disponibles ne dépassent pas la capacité du véhicule
+          
             vehicule = trajet.vehicule  
             if trajet.places_disponibles > vehicule.places:  
                 messages.error(request, "Le nombre de places disponibles ne peut pas dépasser la capacité du véhicule.")
@@ -190,12 +190,9 @@ def create_trajet(request):
 def trajets(request):
     now = timezone.now()
 
-    trajets = Trajet.objects.filter( date__gt=now.date()).exclude(user=request.user) 
-    trajets = trajets.exclude(date=now.date(), heure_depart__lt=now.time())
-
-    # Exclure les trajets dont la date est aujourd'hui et dont l'heure de départ est déjà passée
+    trajets = Trajet.objects.filter(date__gte=now.date(), places_disponibles__gt=0)
+    trajets = trajets.exclude(user=request.user)
     trajets = trajets.exclude(date=now.date(),heure_depart__lt=now.time())
-
     context = {'trajets': trajets}
     return render(request, 'trajet.html', context)
 
@@ -244,7 +241,6 @@ def annulerT(request):
             trajet.save()
             messages.success(request, f"{updated_count} réservation(s) annulée(s).")
         except Trajet.DoesNotExist:
-            # Gérer le cas où le trajet n'existe pas
             pass
 
         context = {'trajets': trajets}
@@ -267,29 +263,26 @@ def dashboard_driver(request):
 def verify(request):
     user = request.user
 
-    # Vérifier si l'utilisateur a au moins une voiture enregistrée
     if Vehicule.objects.filter(user=user).exists():
         return redirect('cars')
     else:
-        # Si l'utilisateur n'a pas de voiture, le rediriger vers la page d'ajout de voiture
+       
         return redirect('addCar')
 
 def addCar(request):
     if request.method == 'POST':
         form = CarForm(request, data=request.POST)
         if form.is_valid():
-            # Récupérer les données du formulaire
             plaque = form.cleaned_data['plaque']
             modele = form.cleaned_data['modele']
             places = form.cleaned_data['places']
             color = form.cleaned_data['color']
-            
-            # Vérifier si le véhicule est déjà enregistré
+
             try:
                 vehicle = Vehicule.objects.get(plaque=plaque)
                 messages.warning(request, f'Le véhicule {modele} avec la plaque {plaque} est déjà enregistré.')
             except Vehicule.DoesNotExist:
-                # Créer un nouveau véhicule et le sauvegarder
+        
                 vehicle = Vehicule(
                     user=request.user,
                     plaque=plaque,
@@ -311,31 +304,42 @@ def cars(request):
     return render(request, 'cars.html', {'vehicles': vehicles})
 
 def paiement(request, reservation_id):
-    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
-
+    reservation = get_object_or_404(Reservation, id=reservation_id)    
     if request.method == 'POST':
-        form = PaiementForm(request.POST, request.FILES, instance=reservation)
-        
+        form = PaiementForm(request.POST, request.FILES)
         if form.is_valid():
-            paiement_instance = form.save(commit=False)
-            paiement_instance.user = request.user
-            paiement_instance.code_confirmation = reservation.confirmation_code  # Utiliser le code de la réservation
-            paiement_instance.statut = 'confirmé'
-            paiement_instance.save()
+            paiement_instance=form.save()
 
-            messages.success(request, f"Votre paiement a été confirmé avec succès. Code de confirmation : {paiement_instance.code_confirmation}")
-            return redirect('reservation')
-
+            reservation.avance = paiement_instance.paiement
+            reservation.statut= 'confirmé'
+            reservation.save()    
+            return redirect('reservation')  
     else:
-        form = PaiementForm(instance=reservation)
+        form = PaiementForm()
 
-    context = {
-        'form': form,
-        'reservation': reservation  
-    }
-    return render(request, 'paiement.html', context)
+    return render(request, 'paiement.html', {'form': form})
 
 def generate_confirmation_code(length=8):
    
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
+
+def notif(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Vous devez être connecté pour voir vos réservations.")
+        return redirect('login')  
+
+    trajets = Trajet.objects.filter(user=request.user)
+    reservations = Reservation.objects.filter(trajet__in=trajets)
+
+    return render(request, 'notifications.html', {
+        'reservations': reservations,
+    })  
+
+def my_payment(request):
+    if request.user.is_authenticated:
+        payments = Paiement.objects.filter(user=request.user)
+    else:
+        payments = []
+
+    return render(request, 'my_payment.html', {'payments': payments})    

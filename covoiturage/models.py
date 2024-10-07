@@ -22,6 +22,7 @@ class Trajet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     vehicule = models.ForeignKey(Vehicule, on_delete=models.CASCADE, null=True)
     status = models.CharField(max_length=20, choices=[('En cours', 'En cours'), ('Terminé', 'Terminé'),('Annulé','Annulé')])
+    telephone = models.PositiveBigIntegerField(null = True)
 
     def __str__(self) -> str:
         return f"{self.point_depart} - {self.destination}"
@@ -48,7 +49,7 @@ class Reservation(models.Model):
     point_de_rencontre = models.CharField(max_length=255, null=True)
     places = models.PositiveBigIntegerField(null=True)
     confirmation_code = models.CharField(max_length=100, unique=True, null =True)
-    avance = models.ImageField(upload_to='confirmation_photos/', null=True, blank=True)
+    avance = models.ImageField(upload_to='paiement/', null=True, blank=True)
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES)
     
 
@@ -89,8 +90,10 @@ class Commentaire(models.Model):
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE, null=True)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, null=True)
     contenu = models.TextField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.contenu
@@ -98,9 +101,9 @@ class Notification(models.Model):
 class Paiement(models.Model):
     trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='paiement/', null=True, blank=True)
+    paiement = models.ImageField(upload_to='paiement/', null=True, blank=True)
     code_confirmation = models.CharField(max_length=100, unique=True, null = True)
-    date = models.DateTimeField()
+    timestamp = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"{self.user} - {self.montant}"
+        return f"{self.user} a paye {self.timestamp}"

@@ -1,8 +1,9 @@
 from django.contrib import admin
 from .models import Vehicule, Trajet, Reservation, Commentaire, Notification, Paiement, Categorie
-
+admin.site.site_header = ('JANA NANJE')
+admin.site.site_title = ('JANA_NANJE Administration')
 class TrajetAdmin(admin.ModelAdmin):
-    list_display = ('point_depart', 'passe_par', 'destination', 'heure_depart', 'places_disponibles', 'date', 'user', 'vehicule', 'status')
+    list_display = ('user','point_depart', 'passe_par', 'destination', 'heure_depart', 'places_disponibles', 'date','telephone' , 'vehicule', 'status')
     list_filter = ('heure_depart', 'user', 'destination')
     search_fields = ('point_depart', 'destination')
 
@@ -31,7 +32,7 @@ class TrajetAdmin(admin.ModelAdmin):
 admin.site.register(Trajet, TrajetAdmin)
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'trajet','places','timestamp', 'point_de_rencontre')
+    list_display = ('user', 'trajet','places','timestamp', 'point_de_rencontre','avance','statut')
     search_fields = ('timestamp','places','point_de_rencontre')
 
 admin.site.register(Reservation, ReservationAdmin)
@@ -43,5 +44,5 @@ class CommentaireAdmin(admin.ModelAdmin):
 admin.site.register(Commentaire, CommentaireAdmin)      
 admin.site.register(Notification)
 class PaiementAdmin (admin.ModelAdmin):
-    list_display = ('image','code_confirmation', 'date')
+    list_display = ('paiement','code_confirmation', 'timestamp')
 admin.site.register(Paiement, PaiementAdmin)    
